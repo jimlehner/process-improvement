@@ -6,8 +6,9 @@ import pandas as pd
 import warnings
 
 def network_analysis(df_list, condition, label_list, title='Network Analysis', rows=1, 
-                     cols=2, linestyle='-', xticks=False, hide_last='Off', color=None,
-                     round_value=3, figsize=(15,10), dpi=300, restrict_UPL=False, restrict_LPL=True):
+                     cols=2, linestyle=True, xticks=False, hide_last='Off', color=None,
+                     round_value=3, figsize=(15,10), dpi=300, restrict_UPL=False, restrict_LPL=True,
+                     title_fontsize=14, title_position=1.05):
     
     """
     Generates a list of small multiples each containing the X Chart portion of an XmR Chart from the provided list of DataFrames.
@@ -26,12 +27,12 @@ def network_analysis(df_list, condition, label_list, title='Network Analysis', r
         Number of rows in the subplot grid.
     cols : int, optional (default=2)
         Number of columns in the subplot grid.
-    linestyle : str, optional (default='-')
-        Line style for the data plots.
+    linestyle : bool, optional (default=True)
+        If True, lien connecting values in plots are displayed.
     xticks : bool, optional (default=False)
         Whether to display x-axis ticks.
-    hide_last : str, optional (default='Off')
-        Whether to hide the last subplot. Options are 'On' or 'Off'.
+    hide_last : bool, optional (default=False)
+        Whether to hide the last subplot.
     color : list of str, optional
         List of colors for the data plots. If not provided, defaults to ['tab:blue'].
     figsize : tuple, optional (default=(15, 10))
@@ -42,6 +43,10 @@ def network_analysis(df_list, condition, label_list, title='Network Analysis', r
         If True, restricts the value of the Upper Process Limit (UPL) to 100.
     restrict_LPL : bool, optional (default=True)
         If True, restricts the value of the Lower Process Limit (LPL) to 0.
+    title_fontsize : str, optional (default=14)
+        Controls the fontsize of the plot's title. 
+    title_position : int, optional (default=1.05)
+        Controls the y-position of the plot's title. 
 
     Returns:
     --------
@@ -145,10 +150,16 @@ def network_analysis(df_list, condition, label_list, title='Network Analysis', r
         axis=1
     )
     
+    # Conditionally turn connecting line on and off
+    if linestyle:
+        linestyle='-'
+    else:
+        linestyle=''
+
     # Plotting
     fig, axes = plt.subplots(nrows=rows, ncols=cols, figsize=figsize, sharey=True, dpi=dpi)
     plt.subplots_adjust(wspace=0)
-    plt.suptitle(title, fontsize=14, y=1.05)
+    plt.suptitle(title, fontsize=title_fontsize, y=title_position)
 
     axes = axes.flatten() if isinstance(axes, np.ndarray) else [axes]
 
@@ -184,8 +195,11 @@ def network_analysis(df_list, condition, label_list, title='Network Analysis', r
             ax.set_xticks([])
 
     # Hide the last subplot by removing its axis
-    if hide_last.lower() == 'on':
+    if hide_last:
         axes[-1].axis('off')
+        
+    # if hide_last.lower() == 'on':
+    #     axes[-1].axis('off')
     
     # Show figure 
     plt.show()
@@ -198,8 +212,9 @@ def network_analysis(df_list, condition, label_list, title='Network Analysis', r
 
 def limit_chart_network_analysis(df_list, condition, label_list, USL, LSL, Target,
                         title='Network Analysis', rows=1, cols=2, 
-                        linestyle='-', xticks=False, hide_last='Off', color=None,
-                        round_value=3, figsize=(15,10), dpi=300):
+                        linestyle=True, xticks=False, hide_last='Off', color=None,
+                        round_value=3, figsize=(15,10), dpi=300, 
+                        title_fontsize=14, title_position=1.05):
     
     """
     Generates a grid of small multiples composed of the list of dataframes provided by df_list.
@@ -224,8 +239,8 @@ def limit_chart_network_analysis(df_list, condition, label_list, USL, LSL, Targe
         Number of rows in the subplot grid.
     cols : int, optional (default=2)
         Number of columns in the subplot grid.
-    linestyle : str, optional (default='-')
-        Line style for the data plots.
+    linestyle : bool, optional (default=True)
+        If True, lien connecting values in plots are displayed.
     xticks : bool, optional (default=False)
         Whether to display x-axis ticks.
     hide_last : str, optional (default='Off')
@@ -236,6 +251,10 @@ def limit_chart_network_analysis(df_list, condition, label_list, USL, LSL, Targe
         Size of the overall figure.
     dpi : int, optional (default=300)
         Dots per inch for the figure resolution.
+    title_fontsize : str, optional (default=14)
+        Controls the fontsize of the plot's title. 
+    title_position : int, optional (default=1.05)
+        Controls the y-position of the plot's title. 
 
     Returns:
     --------
@@ -324,10 +343,16 @@ def limit_chart_network_analysis(df_list, condition, label_list, USL, LSL, Targe
     parameters_df['Centering Distance'] = parameters_df['Mean']-Target
     parameters_df['Tolerance Delta'] = parameters_df['PLR']-parameters_df['Tolerance']
     
+    # Conditionally turn connecting line on and off
+    if linestyle:
+        linestyle='-'
+    else:
+        linestyle=''
+
     # Plotting
     fig, axes = plt.subplots(nrows=rows, ncols=cols, figsize=figsize, sharey=True, dpi=dpi)
     plt.subplots_adjust(wspace=0)
-    plt.suptitle(title, fontsize=14, y=1.05)
+    plt.suptitle(title, fontsize=title_fontsize, y=title_position)
 
     axes = axes.flatten() if isinstance(axes, np.ndarray) else [axes]
 

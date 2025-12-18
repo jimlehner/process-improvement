@@ -8,7 +8,8 @@ import warnings
 def xmr_comparison(df_list, condition, xtick_labels, subplot_titles, 
                    figsize=(15,6), tickinterval=5, round_value=2, 
                    dpi=500, show_limit_labels=True, restrict_UPL=False, 
-                   restrict_LPL=True):
+                   restrict_LPL=True, linestyle=True, label_fontsize=14, xtick_fontsize=10,
+                   xchart_ylabel='Individual Values (X)', mrchart_ylabel='Moving Range (mR)'):
     
     """
     Dynmaically generates a grid of subplots containing XmR Charts based on the length of the provided df_list.
@@ -38,6 +39,22 @@ def xmr_comparison(df_list, condition, xtick_labels, subplot_titles,
         If True, restricts the value of the Upper Process Limit (UPL) to 100. Default is False.
     restrict_LPL : bool, optional
         If True, restricts the value of the Lower Process Limit (LPL) to 0. Default is True.
+    linestyle : bool, optional
+        If True, XmR Chart displays the line connecting the values in the dataset. Default is True.
+    label_fontsize : int, optional
+        Controls the fontsize for the process limit labels and y-axis labels . Default is 14.
+    xtick_fontsize : int, optional
+        Controls the fontsize of the xtick labels for the X Chart. Default is 10.
+    linestyle : bool, optional
+        If True, XmR Chart displays the line connecting the values in the dataset. Default is True.
+    label_fontsize : int, optional
+        Controls the fontsize for the process limit labels and y-axis labels . Default is 14.
+    xtick_fontsize : int, optional
+        Controls the fontsize of the xtick labels for the X Chart. Default is 10.
+    xchart_ylabel : str, optional
+        Controls the the X chart y-axis label. Default is 'Individual Value (X)'.
+    mrchart_ylabel : str, optional
+        Controls the mR chart y-axis label. Default is 'Moving Range (mR)'.
 
     Returns:
     --------
@@ -78,6 +95,12 @@ def xmr_comparison(df_list, condition, xtick_labels, subplot_titles,
     
     # Get length of df_list
     n = len(df_list)
+
+    # Conditionally display line connecting values
+    if linestyle:
+        linestyle='-'
+    else:
+        linestyle=''
     
     # Define plotting parameters
     fig, axes = plt.subplots(nrows=2, ncols=n, figsize=(15, 6), dpi=500, sharey='row')
@@ -127,7 +150,7 @@ def xmr_comparison(df_list, condition, xtick_labels, subplot_titles,
         })
         
         # Plot individual values in the first two subplots (top row)
-        axes[0, idx].plot(data, marker='o')
+        axes[0, idx].plot(data, marker='o', linestyle=linestyle)
         # Masking and plotting limits
         axes[0, idx].plot(np.ma.masked_where(data < UPL, data), marker='o', ls='none', color='red', markeredgecolor='black', markersize=9)
         axes[0, idx].plot(np.ma.masked_where(data > LPL, data), marker='o', ls='none', color='red', markeredgecolor='black', markersize=9)
@@ -137,27 +160,34 @@ def xmr_comparison(df_list, condition, xtick_labels, subplot_titles,
         tick_positions = np.arange(0, len(xticks), tickinterval)
         
         axes[0, idx].set_xticks(tick_positions)
-        axes[0, idx].set_xticklabels(xticks.iloc[tick_positions], rotation=0, ha='center')
+        axes[0, idx].set_xticklabels(xticks.iloc[tick_positions], rotation=0, ha='center',
+                                     fontsize=xtick_fontsize)
 
         axes[1, idx].set_xticks(tick_positions)
-        axes[1, idx].set_xticklabels(xticks.iloc[tick_positions], rotation=0, ha='center')
+        axes[1, idx].set_xticklabels(xticks.iloc[tick_positions], rotation=0, ha='center',
+                                     fontsize=xtick_fontsize)
 
         # Add UPL and LPL horizontal lines for individual values plot
         axes[0, idx].axhline(UPL, color='red', linestyle='--')
         axes[0, idx].axhline(LPL, color='red', linestyle='--')
-        axes[0, idx].axhline(mean, color='black', linestyle='--')
+        axes[0, idx].axhline(mean, color='black', linestyle='-')
         
         # Plot moving range in the second row
-        axes[1, idx].plot(moving_range, marker='o')
+        axes[1, idx].plot(moving_range, marker='o', linestyle=linestyle)
+
+        # Offset moving range by 1 relative to the individual values
+        for xi, yi in zip(xticks, moving_range):
+            if np.isnan(yi):
+                axes[1, idx].plot(xi, 0, marker='x', color='white', markersize=0)
     
         # Add UPL and LPL horizontal lines for moving range plot
         axes[1, idx].axhline(URL, color='red', linestyle='--')
-        axes[1, idx].axhline(average_mR, color='black', linestyle='--')
+        axes[1, idx].axhline(average_mR, color='black', linestyle='-')
         axes[1, idx].plot(np.ma.masked_where(moving_range < URL, moving_range), marker='o', ls='none', color='red', markeredgecolor='black', markersize=9)
         
         # Add label to y-axes
-        axes[0, 0].set_ylabel('Individual Values (X)')
-        axes[1, 0].set_ylabel('Moving Ranges (mR)')
+        axes[0, 0].set_ylabel(xchart_ylabel, fontsize=label_fontsize)
+        axes[1, 0].set_ylabel(mrchart_ylabel, fontsize=label_fontsize)
         
         # Establish bbox properties
         bbox_props = dict(boxstyle="round,pad=0.3", fc="white", ec="black", lw=1)
@@ -175,13 +205,18 @@ def xmr_comparison(df_list, condition, xtick_labels, subplot_titles,
             # Check if the current index is part of the relevant condition set
             if idx in idx_conditions.get(n, []):
                 # Top row: UPL, LPL, and Mean labels
-                axes[0, idx].text(axes[0, idx].get_xlim()[1], UPL, 'UPL', color='black', ha='center', va='center', bbox=bbox_props)
-                axes[0, idx].text(axes[0, idx].get_xlim()[1], LPL, 'LPL', color='black', ha='center', va='center', bbox=bbox_props)
-                axes[0, idx].text(axes[0, idx].get_xlim()[1], mean, 'Mean', color='black', ha='center', va='center', bbox=bbox_props)
+                axes[0, idx].text(axes[0, idx].get_xlim()[1], UPL, 'UPL', color='black', ha='center', va='center', 
+                                  fontsize=label_fontsize, bbox=bbox_props)
+                axes[0, idx].text(axes[0, idx].get_xlim()[1], LPL, 'LPL', color='black', ha='center', va='center', 
+                                  fontsize=label_fontsize, bbox=bbox_props)
+                axes[0, idx].text(axes[0, idx].get_xlim()[1], mean, r'$\overline{X}$', color='black', ha='center', va='center', 
+                                  fontsize=label_fontsize, bbox=bbox_props)
 
                 # Bottom row: URL and average mR labels
-                axes[1, idx].text(axes[1, idx].get_xlim()[1], URL, 'URL', color='black', ha='center', va='center', bbox=bbox_props)
-                axes[1, idx].text(axes[1, idx].get_xlim()[1], average_mR, r'$\overline{mR}$', color='black', ha='center', va='center', bbox=bbox_props)
+                axes[1, idx].text(axes[1, idx].get_xlim()[1], URL, 'URL', color='black', ha='center', va='center', 
+                                  fontsize=label_fontsize, bbox=bbox_props)
+                axes[1, idx].text(axes[1, idx].get_xlim()[1], average_mR, r'$\overline{mR}$', color='black', ha='center', va='center', 
+                                  fontsize=label_fontsize, bbox=bbox_props)
              
         # Despine subplots
         sns.despine()
@@ -198,7 +233,7 @@ def xmr_comparison(df_list, condition, xtick_labels, subplot_titles,
     return stats_df
 
 def mrchart_comparison(df_list, condition, x_labels, list_of_plot_labels, 
-                       title='', linestyle='-', tickinterval=5, round_value=2,
+                       title='', linestyle=True, tickinterval=5, round_value=2,
                        colors=['tab:blue','tab:blue'], figsize=(15,3),
                        dpi=300, show_limit_labels=False):
     '''
@@ -293,7 +328,12 @@ def mrchart_comparison(df_list, condition, x_labels, list_of_plot_labels,
     parameters = pd.DataFrame(stats, columns=['Mean', 'Ave. mR', 'URL', 'Characterization'])
     parameters['Labels'] = list_of_plot_labels
     parameters['mRs'] = [abs(df[condition].diff()) for df in df_list]
-    # Specify parameters_df order
+    
+    # Conditionally display line connecting values
+    if linestyle:
+        linestyle='-'
+    else:
+        linestyle=''
     
     # Plotting
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=figsize, sharey=True, dpi=dpi)
@@ -338,7 +378,7 @@ def mrchart_comparison(df_list, condition, x_labels, list_of_plot_labels,
         ax.set_xticks([])
         
     if show_limit_labels:
-        limit_labels = ['URL', '$\overline{{mR}}$']
+        limit_labels = ['URL', '$\overline{{R}}$']
     
         mR_xlimit = axes[1].get_xlim()[1]
 

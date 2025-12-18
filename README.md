@@ -1,5 +1,5 @@
 # process_improvement.py
-The `process_improvement.py` library (version 1.0.4) is a collection of modules and functions designed to help identify, understand, and eliminate the influence of the two types of variation (common causes of routine variation and assignable causes of exceptional variation) that influence business and manufacturing processes. The purpose of this library is to provide manufacturing, quality, and process engineers with a free alternative to subscription based software like JMP and Minitab. While both of these software packages provide users with analytical tools capable of making sense of variation, they also divorce users from a deeper understanding of the analysis of data produced by processes. 
+The `process_improvement.py` library (version 1.1.3) is a collection of modules and functions designed to help identify, understand, and eliminate the influence of the two types of variation (common causes of routine variation and assignable causes of exceptional variation) that influence business and manufacturing processes. The purpose of this library is to provide manufacturing, quality, and process engineers with a free alternative to subscription based software like JMP and Minitab. While both of these software packages provide users with analytical tools capable of making sense of variation, they also divorce users from a deeper understanding of the analysis of data produced by processes. 
 
 The primary tool of the `process_improvement.py` package is the process behavior chart for individual values and a moving range called the XmR Chart. The `process_improvement.py` contains additional modules and functions related to the task of process improvement including capability analysis, network analysis, comparison charts, and limit charts. 
 
@@ -47,7 +47,7 @@ Each of these modules can be used to address a different aspect of understanding
 ## Functions
 ```xmr_charts.py```
 The `xmr_charts` module contains 3 function:
-1. `xmrchart`: Generates a process behavior chart of individual values and a moving range called an XmR Chart from the provided DataFrame.
+1. `xmr_chart`: Generates a process behavior chart of individual values and a moving range called an XmR Chart from the provided DataFrame.
 2. `xchart`: Generates the X Chart portion of an XmR Chart from the provided DataFrame.
 3. `mrchart`: Generates the moving range (mR) Chart portion of an XmR Chart from the provided DataFrame.
 

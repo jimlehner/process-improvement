@@ -279,7 +279,7 @@ def capability_histogram(data, USL, LSL, target, round_value=2, bins=10, figsize
     return process_capabilities
 
 def multi_chart(df, condition_column, xtick_label_column, USL, LSL, target, figsize=(15,4), subplot_titles=['X Chart','Histogram'],
-                dpi=500, show_limit_values=False, show_xticks=True, round_value=2, tick_interval=5):
+                dpi=500, show_limit_values=False, show_xticks=True, round_value=2, tick_interval=5, bin_number='auto'):
     """
     Generates a process behavior chart (X Chart) and a histogram, including process limits (USL, LSL), target, and UPL, LPL.
     
@@ -311,6 +311,8 @@ def multi_chart(df, condition_column, xtick_label_column, USL, LSL, target, figs
         Number of decimal places to round to (default is 2).
     tick_interval : int, optional 
         Interval for the x-tick labels (default is 2).
+    bin_number : int, optional
+        Specify number of bins for the capability histogram (default is 'auto').
 
     Returns:
     --------
@@ -366,7 +368,7 @@ def multi_chart(df, condition_column, xtick_label_column, USL, LSL, target, figs
     C2 = 3.268
     # Calculate the process limits
     UPL = round(mean + (C1*average_mR),round_value)
-    LPL = round(max(mean - (C1*average_mR),round_value),0)
+    LPL = round(max(mean - (C1*average_mR),round_value),round_value)
     
     # Create masking parameters for values greater than and less than the process limits on X-chart
     upper_lim = np.ma.masked_where(data < UPL, data)
@@ -397,14 +399,14 @@ def multi_chart(df, condition_column, xtick_label_column, USL, LSL, target, figs
         ax[0].axhline(value, ls='--', c=color)
 
     # Histogram  of values to ax[1]
-    histplot=sns.histplot(y=data, ax=ax[1], edgecolor='white')
+    histplot=sns.histplot(y=data, ax=ax[1], edgecolor='white', bins=bin_number)
 
     # Add centerline and process limits 
     for value, color in limit_chart_lines:
         ax[1].axhline(value, ls='--', c=color)
 
     # Use numpy histogram to calculate bin counts
-    counts, bins = np.histogram(data, bins='auto')
+    counts, bins = np.histogram(data, bins=bin_number)
 
     # Get the maximum height of the bars
     max_count = max(counts)

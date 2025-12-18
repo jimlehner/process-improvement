@@ -5,9 +5,11 @@ import matplotlib.patches as mpatches
 from matplotlib import pyplot as plt
 import os
 
-def xmrchart(df, values, x_labels, xchart_title='', mrchart_title='', figsize=(15,6), 
+def xmr_chart(df, values, x_labels, xchart_title='', mrchart_title='', figsize=(15,6), 
              round_value=2, rotate_labels=0, tickinterval=1, dpi=300, 
-             show_limit_values=True, restrict_UPL=False, restrict_LPL=True):
+             show_limit_values=True, restrict_UPL=False, restrict_LPL=True, 
+             linestyle=True, label_fontsize=14, xtick_fontsize=10, ave_linestyle='-',
+             xchart_ylabel='Individual Value (X)', mrchart_ylabel='Moving Range (mR)'):
     """
     Generate an XmR chart (X-chart and mR-chart) from the provided DataFrame.
 
@@ -43,6 +45,18 @@ def xmrchart(df, values, x_labels, xchart_title='', mrchart_title='', figsize=(1
         If True, restricts the value of the Upper Process Limit (UPL) to 100. Default is False.
     restrict_LPL : bool, optional
         If True, restricts the value of the Lower Process Limit (LPL) to 0. Default is True.
+    linestyle : bool, optional
+        If True, XmR Chart displays the line connecting the values in the dataset. Default is True.
+    label_fontsize : int, optional
+        Controls the fontsize for the process limit labels and y-axis labels . Default is 14.
+    xtick_fontsize : int, optional
+        Controls the fontsize of the xtick labels for the X Chart. Default is 10.
+    ave_linestyle : str, optional
+        Controls the line style for the mean and the average moving range. Default is '-'.
+    xchart_ylabel : str, optional
+        Controls the the X chart y-axis label. Default is 'Individual Value (X)'.
+    mrchart_ylabel : str, optional
+        Controls the mR chart y-axis label. Default is 'Moving Range (mR)'.
 
     Returns:
     --------
@@ -120,13 +134,19 @@ def xmrchart(df, values, x_labels, xchart_title='', mrchart_title='', figsize=(1
     }
 
     # Define chart elements in structured lists
-    xchart_lines = [(mean, 'black'), (UPL, 'red'), (LPL, 'red')]
-    mrchart_lines = [(average_mR, 'black'), (URL, 'red')]
+    xchart_lines = [(mean, ave_linestyle, 'black'), (UPL, '--', 'red'), (LPL, '--', 'red')]
+    mrchart_lines = [(average_mR, ave_linestyle, 'black'), (URL, '--', 'red')]
+    
+    # Conditionally display line connecting values
+    if linestyle:
+        linestyle='-'
+    else:
+        linestyle=''
 
     # Create XmR Chart
     fig, axs = plt.subplots(nrows=2, ncols=1, figsize=figsize, dpi=dpi)
-    axs[0].plot(labels, data, marker='o')
-    axs[1].plot(labels, moving_ranges, marker='o')
+    axs[0].plot(labels, data, marker='o', linestyle=linestyle)
+    axs[1].plot(labels, moving_ranges, marker='o', linestyle=linestyle)
 
     # Function to highlight points outside process limits
     def highlight_assignable_causes(ax, labels, masked_values, color='tab:red', size=9):
@@ -139,10 +159,10 @@ def xmrchart(df, values, x_labels, xchart_title='', mrchart_title='', figsize=(1
     highlight_assignable_causes(axs[1], labels, {"url_greater": masked_values["url_greater"]})
 
     # Add process limit lines
-    for value, color in xchart_lines:
-        axs[0].axhline(value, ls='--', c=color)
-    for value, color in mrchart_lines:
-        axs[1].axhline(value, ls='--', color=color)
+    for value, line_type, color in xchart_lines:
+        axs[0].axhline(value, ls=line_type, c=color)
+    for value, line_type, color in mrchart_lines:
+        axs[1].axhline(value, ls=line_type, color=color)
 
     # Standardize axis formatting
     for ax in axs:
@@ -150,23 +170,29 @@ def xmrchart(df, values, x_labels, xchart_title='', mrchart_title='', figsize=(1
         ax.spines[['left', 'bottom']].set_alpha(0.5)
 
     # Configure labels and tick marks
-    axs[0].set_ylabel('Individual Values (X)', fontsize=12)
-    axs[0].set_title(xchart_title, fontsize=14)
+    axs[0].set_ylabel(xchart_ylabel, fontsize=label_fontsize)
+    axs[0].set_title(xchart_title, fontsize=16)
 
     tick_positions = np.arange(0, len(labels), tickinterval)
     axs[0].set_xticks(tick_positions)
-    axs[0].set_xticklabels(labels.iloc[tick_positions], rotation=rotate_labels, ha='center')
+    axs[0].set_xticklabels(labels.iloc[tick_positions], rotation=rotate_labels, ha='center', 
+                           fontsize=xtick_fontsize)
 
     axs[1].set_xlabel('Observation', fontsize=0)
-    axs[1].set_ylabel('Moving Range (mR)', fontsize=12)
-    axs[1].set_title(mrchart_title, fontsize=14)
+    axs[1].set_ylabel(mrchart_ylabel, fontsize=label_fontsize)
+    axs[1].set_title(mrchart_title, fontsize=label_fontsize)
     axs[1].set_xticks([])
     
+    # Offset moving ranges by one relative to the indivual values
+    for xi, yi in zip(labels, moving_ranges):
+        if np.isnan(yi):
+            plt.plot(xi, 0, marker='x', color='white', markersize=0) 
+
     # Conditional show limit values
     if show_limit_values:
         limit_labels = [UPL, LPL, mean, URL, average_mR]
     else:
-        limit_labels = ['UPL', 'LPL', 'Mean', 'URL', '$\overline{{mR}}$']
+        limit_labels = ['UPL', 'LPL', '$\overline{{X}}$', 'URL', '$\overline{{mR}}$']
 
     # Get x limit of subplots
     xlimit = axs[0].get_xlim()[1]
@@ -187,6 +213,7 @@ def xmrchart(df, values, x_labels, xchart_title='', mrchart_title='', figsize=(1
                       xy=(x_pos, y_pos),
                       ha='center',
                       va='center',
+                      fontsize=label_fontsize,
                       bbox=dict(facecolor='white', boxstyle='round'))
     
     # Despine plot
@@ -209,12 +236,12 @@ def xmrchart(df, values, x_labels, xchart_title='', mrchart_title='', figsize=(1
             return 'Common Cause'
     
     # Apply variation_conditions
-    df['X-Chart Variation'] = df[values].apply(xchart_variation)
-    df['mR-Chart Variation'] = df['Moving Ranges'].apply(mrchart_variation)
+    df['X chart variation'] = df[values].apply(xchart_variation)
+    df['mR chart variation'] = df['Moving Ranges'].apply(mrchart_variation)
     
     # Create list of PBC paramters
-    chart_type = ['X-Chart']*4
-    chart_type.extend(['mR-Chart'] * 2)
+    chart_type = ['X chart']*4
+    chart_type.extend(['mR chart'] * 2)
     param_names = ['Mean','UPL','LPL','PLR','Ave. mR','URL']
     param_values = [round(x,round_value) for x in [mean,UPL,LPL,PLR,average_mR,URL]] 
    
@@ -233,7 +260,8 @@ def xmrchart(df, values, x_labels, xchart_title='', mrchart_title='', figsize=(1
 
 def xchart(df, values, x_labels, title='', figsize=(15,3), 
              round_value=2, rotate_labels=0, tickinterval=5, dpi=300, 
-             show_limit_values=True, restrict_UPL=False, restrict_LPL=True):
+             show_limit_values=True, restrict_UPL=False, restrict_LPL=True,
+             xchart_ylabel='Individual Value (X)'):
     """
     Generate an X Chart portion of an XmR Chart from the provided DataFrame.
 
@@ -264,6 +292,8 @@ def xchart(df, values, x_labels, title='', figsize=(15,3),
         If True, restricts the value of the Upper Process Limit (UPL) to 100.
     restrict_LPL : bool, optional (default=True)
         If True, restricts the value of the Lower Process Limit (LPL) to 0.
+    xchart_ylabel : str, optional
+        Controls the the X chart y-axis label. Default is 'Individual Value (X)'.
 
     Returns:
     --------
@@ -367,7 +397,7 @@ def xchart(df, values, x_labels, title='', figsize=(15,3),
     ax.spines[['left', 'bottom']].set_alpha(0.5)
 
     # Configure labels and tick marks
-    ax.set_ylabel('Individual Values (X)', fontsize=12)
+    ax.set_ylabel(xchart_ylabel, fontsize=12)
     ax.set_title(title, fontsize=14)
 
     tick_positions = np.arange(0, len(labels), tickinterval)
@@ -416,12 +446,12 @@ def xchart(df, values, x_labels, title='', figsize=(15,3),
             return 'Common Cause'
     
     # Apply variation_conditions
-    df['X-Chart Variation'] = df[values].apply(xchart_variation)
-    df['mR-Chart Variation'] = df['Moving Ranges'].apply(mrchart_variation)
+    df['X chart variation'] = df[values].apply(xchart_variation)
+    df['mR chart variation'] = df['Moving Ranges'].apply(mrchart_variation)
     
     # Create list of PBC paramters
-    chart_type = ['X-Chart']*4
-    chart_type.extend(['mR-Chart'] * 2)
+    chart_type = ['X chart']*4
+    chart_type.extend(['mR chart'] * 2)
     param_names = ['Mean','UPL','LPL','PLR','Ave. mR','URL']
     param_values = [round(x,round_value) for x in [mean,UPL,LPL,PLR,average_mR,URL]] 
     
@@ -439,7 +469,8 @@ def xchart(df, values, x_labels, title='', figsize=(15,3),
     return result_dfs
 
 def mrchart(df, values, x_labels, title='', figsize=(15,3), 
-             round_value=2, rotate_labels=0, tickinterval=5, dpi=300, show_limit_values=True):
+             round_value=2, rotate_labels=0, tickinterval=5, dpi=300, show_limit_values=True,
+             mrchart_ylabel='Moving Range (mR)'):
     """
     Generate an mR Chart portion of an XmR Chart from the provided DataFrame.
 
@@ -465,6 +496,12 @@ def mrchart(df, values, x_labels, title='', figsize=(15,3),
         Resolution of the figure in dots per inch. Default is 300.
     show_limit_values : bool, optional
         If True, displays numerical values for control limits. Default is True.
+    linestyle : bool, optional
+        If True, XmR Chart displays the line connecting the values in the dataset. Default is True.
+    label_fontsize : int, optional
+        Controls the fontsize for the process limit labels and y-axis labels . Default is 14.
+    mrchart_ylabel : str, optional
+        Controls the mR chart y-axis label. Default is 'Moving Range (mR)'.
 
     Returns:
     --------
@@ -533,9 +570,15 @@ def mrchart(df, values, x_labels, title='', figsize=(15,3),
     # Define chart elements in structured lists
     mrchart_lines = [(average_mR, 'black'), (URL, 'red')]
 
+    # Conditionally turn on plot line with linestyle
+    if linestyle:
+        linestyle='-'
+    else:
+        linestyle=''
+
     # Create XmR Chart
     fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
-    ax.plot(labels, moving_ranges, marker='o')
+    ax.plot(labels, moving_ranges, marker='o', linestyle=linestyle)
 
     # Function to highlight points outside process limits
     def highlight_assignable_causes(ax, labels, masked_values, color='tab:red', size=9):
@@ -556,14 +599,14 @@ def mrchart(df, values, x_labels, title='', figsize=(15,3),
 
     # Configure labels and tick marks
     ax.set_xlabel('Observation', fontsize=0)
-    ax.set_ylabel('Moving Range (mR)', fontsize=12)
+    ax.set_ylabel(mrchart_ylabel, fontsize=label_fontsize)
     ax.set_title(title, fontsize=14)
     ax.set_xticks([])  # Remove xticks from mR-chart
 
     if show_limit_values:
         limit_labels = [URL, average_mR]
     else:
-        limit_labels = ['URL', '$\overline{{mR}}$']
+        limit_labels = ['URL', '$\overline{{R}}$']
 
     mR_xlimit = ax.get_xlim()[1]
 
@@ -579,6 +622,7 @@ def mrchart(df, values, x_labels, title='', figsize=(15,3),
                       xy=(x_pos, y_pos),
                       ha='center',
                       va='center',
+                      fontsize=label_fontsize,
                       bbox=dict(facecolor='white', boxstyle='round'))
     
     # Despine plot
@@ -601,12 +645,12 @@ def mrchart(df, values, x_labels, title='', figsize=(15,3),
             return 'Common Cause'
     
     # Apply variation_conditions
-    df['X-Chart Variation'] = df[values].apply(xchart_variation)
-    df['mR-Chart Variation'] = df['Moving Ranges'].apply(mrchart_variation)
+    df['X chart variation'] = df[values].apply(xchart_variation)
+    df['mR chart variation'] = df['Moving Ranges'].apply(mrchart_variation)
     
     # Create list of PBC paramters
-    chart_type = ['X-Chart']*4
-    chart_type.extend(['mR-Chart'] * 2)
+    chart_type = ['X chart']*4
+    chart_type.extend(['mR chart'] * 2)
     param_names = ['Mean','UPL','LPL','PLR','Ave. mR','URL']
     param_values = [round(x,round_value) for x in [mean,UPL,LPL,PLR,average_mR,URL]] 
     
