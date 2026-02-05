@@ -1,97 +1,771 @@
-# process_improvement.py
-The `process_improvement.py` library (version 1.1.3) is a collection of modules and functions designed to help identify, understand, and eliminate the influence of the two types of variation (common causes of routine variation and assignable causes of exceptional variation) that influence business and manufacturing processes. The purpose of this library is to provide manufacturing, quality, and process engineers with a free alternative to subscription based software like JMP and Minitab. While both of these software packages provide users with analytical tools capable of making sense of variation, they also divorce users from a deeper understanding of the analysis of data produced by processes. 
+# process_improvement
 
-The primary tool of the `process_improvement.py` package is the process behavior chart for individual values and a moving range called the XmR Chart. The `process_improvement.py` contains additional modules and functions related to the task of process improvement including capability analysis, network analysis, comparison charts, and limit charts. 
+![PyPI version](https://img.shields.io/pypi/v/process-improvement)
+![Build Status](https://img.shields.io/github/actions/workflow/status/jimlehner/process-improvement/ci.yml)
+![License](https://img.shields.io/pypi/l/process-improvement)
 
-The `process_improvement.py` package is part of the larger body of work called `The Broken Quality Initiative` (BrokenQuality.com). The aim of BQI is to address industries' pervasive lack of knowledge regarding variation and the only tool capable of making sense of variation, the process behavior chart (control chart). 
+A Python library for performing calculations and generating figures that facilitate an understanding of **variation**.
 
-Visit [BrokenQuality.com](https://www.BrokenQuality.com/bookshelf) for resources and more details regarding the application and use of `process behavior charts`. Contact me **James.Lehner@gmail.com** if you have questions or would like to collaborate. 
+The primary tool of this library is the **XmR chart**. It also generates grids of X charts (called **network analysis**), capability histograms, Taguchi loss functions, limit charts, and grids of limit charts (called **limit chart network analysis**).
+
+Calculations for process limits are based on the work of **Walter A. Shewhart** and **Donald J. Wheeler**. For those unfamiliar with Wheeler's work, visit [SPCpress.com](https://www.spcpress.com).
+
+The intent of this library is to provide a practical alternative to subscription-based software packages like **Minitab** and **JMP**.
+
+It is part of a broader project called **The Broken Quality Initiative**, which aims to provide manufacturing, process, and quality engineers with the tools and knowledge required to reduce costs and improve quality.
+
+To learn more about how to reduce costs and improve quality by understanding variation, visit [BrokenQuality.com](https://brokenquality.com).
 
 ## Table of Contents
-- [Prerequisites](#prerequisites)
-- [Installation](#installation) 
-- [Usage](#usage)
-- [Modules](#modules)
-- [Contributing](#contributing) 
-- [Contact](#contact) 
+- [Installation](#installation)
+- [Features](#features)
+- [Configuration and usage](#configuration-and-usage)
+    - [XmRChartConfig](#xmrchartconfig)
+    - [NetworkAnalysisConfig](#networkanalysisconfig)
+    - [CapabilityHistogramConfig](#capabilityhistogramconfig)
+    - [ComboChartConfig](#combochartconfig)
+    - [TaguchiLossConfig](#taguchilossconfig)
+    - [LimitChartConfig](#limitchartconfig)
+- [Function Descriptions and Example Figures](#function-descriptions-and-example-figures)
+    - [Capability Histogram](#capability-histogram)
+    - [Combo Chart](#combo-chart)
+    - [Limit Chart](#limit-chart)
+    - [Limit Chart Network Analysis](#limit-chart-network-analysis)
+    - [Network Analysis](#network-analysis)
+    - [Taguchi Loss Function](#taguchi-loss-function)
+    - [XmR Chart](#xmr-chart)
+    - [XmR Chart Comparison](#xmr-chart-comparison)
+- [Project Structure](#project-structure)
+- [Contributing](#contributing)
 - [License](#license)
-- [Additional Information](#additional-information)
-
-## Prerequisites
-Before you begin, ensure you have met the following requirements: 
-- You have installed [Python](https://www.python.org/) 3.6 or higher. 
-- You have a working knowledge of Python and data analysis libraries such as pandas and matplotlib. 
-- You have a working knowledge of `Process Behavior Charts` and `Statistical Process Control`. 
 
 ## Installation
-To install `process_improvement.py` directly from GitHub, enter the following command using the `command prompt`:
 
-```pip install git+https://github.com/jimlehner/process_improvement```
+Install via pip:
+```bash
+pip install process-improvement
+```
 
-## Usage
-After `installation` the `process_improvement.py` library can be used as follows:
-1. From process_improvement import xmr_charts module as xmr:
-```from process_improvement import xmr_charts as xmr```
-2. Call the function of interest from the requisite module:
-```xmr.xmrchart(df, 'Values', 'Observations', title='Example X-chart')```
+Or clone the repository for development:
+```bash
+git clone https://github.com/jimlehner/process_improvement.git
+cd process-improvement
+pip install -e .
+```
 
-## Modules
-The `process_improvement.py` pacakge contains 5 modules:
-1. xmr_charts
-2. process_capability
-3. comparison_charts
-4. limit_charts
-5. network_analysis
-Each of these modules can be used to address a different aspect of understanding variation. 
+## Features
+- Generate XmR charts (Individuals and Moving Range)
+- Calculates average moving range (mR̄) and process limits
+- Generates comparison XmR charts
+- Generates capability histogram and calculates the process capability indices (Cp, Cpk, Pp, Ppk)
+- Generates Taguchi Loss Function visualization to understand economic loss due to poor quality
+- Generates limit charts
+- Generates a grid of XmR charts (network analysis)
+- Generates a grid of run charts with specification limits (limit chart network analysis)
+- Support for custom chart configuration (size, dpi, colors) 
+- Generates publication-quality charts using Matplotlib/Seaborn
+- Modular architecture for extending charts, configurations, and workflows
 
-## Functions
-```xmr_charts.py```
-The `xmr_charts` module contains 3 function:
-1. `xmr_chart`: Generates a process behavior chart of individual values and a moving range called an XmR Chart from the provided DataFrame.
-2. `xchart`: Generates the X Chart portion of an XmR Chart from the provided DataFrame.
-3. `mrchart`: Generates the moving range (mR) Chart portion of an XmR Chart from the provided DataFrame.
+## Configuration and Usage
 
-```process_capability```
-The `process_capability` module contains 3 functions:
-1. `capability_histogram`: Generates a capability histogram of the provided process data in the context of the specifciation limits and the option of displaying the process capability indices.
-2. `multi_chart`: Generates the X Chart portion of an XmR Chart and a capability histogram in the same figure to enable direct visual comparison of process behavior and the distribution of the data.
-3. `process_capabilities`: Calculates the process capability indices of Cp, Cpk, Pp, and Ppk, based on the provided process data, upper and lower specification limits, and target value.
+Each chart type has its own configuration class to control appearance and behavior. The only exception to this is `limit_chart_network_analysis`. This function uses `LimitChartConfig` as its configuration class. 
 
-```comparison_charts```
-The `comparison_charts` module contains 3 functions:
-1. `xchart_comparison`: Generates X Charts from the provided list of DataFrames and visually compares their statistics.
-2. `mrchart_comparison`: Generates moving range (mR) Charts from the provided list of DataFrames and visually compares their statistics.
-3. `xmr_comparison`: Dynamically generates a grid of subplots composed of XmR Charts from the provided list of DataFrames. Comparison is limited to a list length of 5.
+The details for each chart configuration follow.
 
-```limit_charts```
-The `limit_chart` module contains 1 function:
-1. `limit_chart`: Generates a limit chart that sequentially plots process data in the context of the provided specification limits and target.
+### XmRChartConfig
 
-```network_analysis```
-The `network_analysis` module contains 2 function:
-1. `network_analysis`: Generates a list of small multiples each containing the X Chart portion of an XmR Chart from the provided list of DataFrames. For an example of how to use `network_analysis` see the essay [Network Analysis: Advancing the utility of SPC](https://static1.squarespace.com/static/5b722db6f2e6b1ad5053391b/t/679910513be40134de9b54f7/1738084433790/Network+analysis.pdf)
-2. `limit_chart_network_analysis`: Generates a grid of small multiples composed of the list of dataframes provided by df_list.
+The `XmRChartConfig` class defines configuration settings for an XmR chart.
 
-## Notes 
-If you are unfamiliar with process behavior charts (control charts) visit  [BrokenQuality.com](https://www.brokenquality.com/). 
+| Parameter           | Type     | Default | Description                                       |
+|---------------------|----------|---------|---------------------------------------------------|
+| `figsize`           | tuple    | (15,5)  | Figure size `(width, height)`                     |
+| `dpi`               | int      | 350     | Resolution of the figure in dots per inch.        |
+| `show`              | bool     | False   | Whether to display the figure after creation.     |
+| `tickinterval`      | int      | 2       | Interval between ticks on the x-axis.             |
+| `rotate_labels`     | int      | 0       | Rotation angle for x-axis tick labels in degrees. |
+| `xtick_fontsize`    | int      | 10      | Font size for x-axis tick labels.                 |
+| `show_xticks`       | bool     | True    | Whether to display x-axis ticks on subplots.      |
+| `show_yticks`       | bool     | True    | Whether to display y-axis ticks on subplots.      |
+| `label_fontsize`    | int      | 10      | Font size for axis labels.                        |
+| `limit_chart_ylabel`| str      | ''      | Label for y-axis on the first column of subplots. |
+| `linestyle`         | str      | '-'     | Line style for the main data line in subplots.    |
+| `mean_linestyle`    | str      | '-'     | Line style for the mean/central line in subplots. |
+| `target_line_color` | str      | 'green' | Color of the target line.                         |
+| `target_linestyle`  | str      | '--'    | Line style for the target line.                   |
+| `show_chart_title`  | bool     | False   | Whether to display subplot titles.                |
+| `show_label_values` | bool     | True    | Whether to display numeric values as annotations. |
+| `show_mean`         | bool     | True    | Whether to display the mean line on subplots.     |
+| `round_value`       | int      | 2       | Number of decimal places for rounding.            |
+
+
+#### XmRChartConfig Usage Example
+
+```python
+
+import pandas as pd
+from process_improvement.charts.xmr_charts import xmr_chart
+from process_improvement.charts.utils import XmRChartConfig
+
+# Example DataFrame
+df = pd.DataFrame({
+    "date": ["2025-01-01", "2025-01-02", "2025-01-03", "2025-01-04"],
+    "value": [5.2, 5.5, 5.1, 5.8]
+})
+
+config = XmRChartConfig(
+    figsize=(15,5),
+    dpi=350,
+    show=True,
+    tickinterval=2,
+    rotate_labels=0,
+    xtick_fontsize=10,
+    show_xticks=True,
+    show_yticks=True,
+    label_fontsize=10,
+    limit_chart_ylabel='Resistance',
+    linestyle='-',
+    mean_linestyle='-',
+    target_line_color='tab:green',
+    target_linestyle='--',
+    show_chart_title=False,
+    show_label_values=True,
+    show_mean=True,
+    round_value=2
+)
+
+# Generate XmR chart
+xmr_result = xmr_chart(
+    df=df,
+    values="value",
+    x_labels="date",
+    config=config
+)
+```
+
+### NetworkAnalysisConfig
+
+The `NetworkAnalysisConfig` class defines configuration settings for a grid of XmR charts in a network analysis.
+
+| Parameter           | Type     | Default | Description                                       |
+|---------------------|----------|---------|---------------------------------------------------|
+| `figsize`           | tuple    | (15,6)  | Figure size `(width, height)`                     |
+| `dpi`               | int      | 350     | Resolution of the figure in dots per inch.        |
+| `show`              | bool     | False   | Whether to display the figure after creation.     |
+| `wspace`            | float    | 0.0     | Width space between subplots.                     |
+| `tickinterval`      | int      | 1       | Interval between ticks on the x-axis.             |
+| `show_x_ticks`      | bool     | True    | Whether to display x-axis ticks on subplots.      |
+| `show_y_ticks`      | bool     | True    | Whether to display y-axis ticks on subplots.      |
+| `xtick_fontsize`    | int      | 10      | Font size for x-axis tick labels.                 |
+| `label_fontsize`    | int      | 10      | Font size for axis labels.                        |
+| `rotate_labels`     | int      | 0       | Rotation angle for x-axis tick labels in degrees. |
+| `subplot_ylabel`    | str      | 'Individual Value (X)'|  Label for y-axis on subplots.      |
+| `linestyle`         | bool     | True    | Whether to draw the main data line in subplots.   |
+| `ave_linestyle`     | str      | '-'     | Line style for the average/central line.          |
+| `show_chart_titles` | bool     | False   | Whether to display chart titles above subplots.   |
+| `chart_title`       | str      | 'Network Analysis'|  Title for the overall chart.           |
+| `chart_title_fontsize`| int    | 14      | Font size for the chart title.                    |
+| `subplot_title_fontsize`| int  | 12      | Font size for individual subplot titles.          |
+| `round_value`       | int      | 2       | Number of decimal places for rounding.            |
+| `show_limit_values` | bool     | True    | Whether to display limit values on the chart.     |
+| `restrict_UPL`      | bool     | False   | Whether to restrict plotting above UPL.           |
+| `restrict_LPL`      | bool     | True    | Whether to restrict plotting below LPL.           |
+
+#### NetworkAnalysisConfig Usage Example
+
+```python
+
+import pandas as pd
+from process_improvement.charts.xmr_charts import network_analysis
+from process_improvement.charts.utils import NetworkAnalysisConfig
+
+# Example DataFrames
+df1 = pd.DataFrame({
+    "time": [1, 2, 3, 4],
+    "value": [5.1, 5.4, 5.2, 5.6]
+})
+
+df2 = pd.DataFrame({
+    "time": [1, 2, 3, 4],
+    "value": [6.0, 6.2, 6.1, 6.3]
+})
+
+df3 = pd.DataFrame({
+    "time": [1, 2, 3, 4],
+    "value": [4.8, 5.0, 4.9, 5.1]
+})
+
+df4 = pd.DataFrame({
+    "time": [1, 2, 3, 4],
+    "value": [6.5, 6.7, 6.6, 6.8]
+})
+
+df_list = [df1, df2, df3, df4]
+
+config = NetworkAnalysisConfig(
+    figsize=(15, 6),
+    dpi=350,
+    show=False,
+    wspace=0.0,
+
+    tickinterval=1,
+    show_x_ticks=True,
+    show_y_ticks=True,
+    xtick_fontsize=10,
+    label_fontsize=10,
+    rotate_labels=0,
+    subplot_ylabel='Individual Value (X)',
+
+    linestyle=True,
+    ave_linestyle='-',
+
+    show_chart_titles=False,
+    chart_title='Network Analysis',
+    chart_title_fontsize=14,
+    subplot_title_fontsize=12,
+
+    round_value=2,
+    show_limit_values=True,
+    restrict_UPL=False,
+    restrict_LPL=True
+)
+
+# Generate network analysis chart
+na_results = network_analysis(
+    df_list=df_list,
+    values="value",
+    nrows=2,
+    ncols=2,
+    subplot_titles=["Process A", "Process B"],
+    config=config
+)
+```
+
+### CapabilityHistogramConfig
+
+The `CapabilityHistogramConfig` class defines configuration settings for a capability histogram. 
+
+| Parameter           | Type     | Default | Description                                       |
+|---------------------|----------|---------|---------------------------------------------------|
+| `figsize`           | tuple    | (15,5)  | Figure size `(width, height)`                     |
+| `dpi`               | int      | 350     | Resolution of the figure in dots per inch.        |
+| `color`             | str      | 'blue'  | Color of histogram bars.                          |
+| `show_capabilities` | bool     | True    | Whether to display Cp, Cpk, Pp, and Ppk.          |
+| `round_value`       | int      | 2       | Decimal precision for calculated statistics.      |
+| `label_fontsize`    | int      | 14      | Font size for labels (mean, target, limits).      |
+| `show_label_values` | bool     | True    | Whether to display numeric for labels.            |
+| `show_mean_label`   | bool     | True    | Whether to show the mean marker and label.        |
+| `show_target_label` | bool     | True    | Whether to show the target marker and label.      |
+| `target_arrow_color`| str      | 'black' | Arrow color for the target indicator.             |
+| `mean_arrow_color`  | str      | 'gray'  | Arrow color for the mean indicator.               |
+| `marker_area_pts2`  | int      | 150     | Area of the scatter plot marker in points squared.|
+| `safety_factor`     | float    | 1.35    | Multiplier for extra space to avoid label overlap.|
+| `legend_round_value`| int      | 2       | Decimal places for values in the legend.          |
+| `legend_loc`        | str      | 'best'  | Location of the legend on the chart.              |
+| `show_title`        | bool     | True    | Whether to display the chart title.               |
+| `title_fontsize`    | int      | 16      | Font size for the chart title.                    |
+| `title_padding`     | int      | 20      | Padding for the chart title.                      |
+| `align_ticks_bins`  | str      | 'None'  | Alignment of x-axis ticks.                        |
+| `rotate_tick_labels`| int      | 0       | Rotation angle for x-axis tick labels.            |
+
+#### CapabilityHistogramConfig Usage Example
+
+```python
+
+import pandas as pd
+from process_improvement.charts.capability_histogram import capability_histogram
+from process_improvement.charts.utils import CapabilityHistogramConfig
+
+# Example data
+data = pd.Series([5.2, 5.5, 5.1, 5.8, 5.6, 5.3, 5.4])
+
+config = CapabilityHistogramConfig(
+    figsize=(15, 5),
+    dpi=350,
+    color='blue',
+
+    show_capabilities=True,
+    round_value=2,
+
+    label_fontsize=14,
+    show_label_values=True,
+    show_mean_label=True,
+    show_target_label=True,
+
+    target_arrow_color='black',
+    mean_arrow_color='gray',
+    marker_area_pts2=150,
+    safety_factor=1.35,
+
+    legend_round_value=2,
+    legend_loc='best',
+
+    show_title=True,
+    title_fontsize=16,
+    title_padding=20,
+
+    align_ticks_bins='None',
+    rotate_tick_labels=0
+)
+
+# Generate capability histogram
+result = capability_histogram(
+    data=data,
+    USL=6,
+    LSL=5,
+    Target=5.5,
+    bins='auto',
+    config=config
+)
+```
+
+### ComboChartConfig
+
+The `ComboChartConfig` class defines configuration settings for a combo chart.
+
+| Parameter           | Type     | Default | Description                                       |
+|---------------------|----------|---------|---------------------------------------------------|
+| `figsize`           | tuple    | (15,5)  | Figure size `(width, height)`                     |
+| `dpi`               | int      | 350     | Resolution of the figure in dots per inch.        |
+| `gridspec_width_ratios`| dict[str, list[int]] | {'width_ratios': [3, 1]} | Suplot widths.    |
+| `round_value`       | int      | 2       | Decimal precision for calculated statistics.      |
+| `tickinterval`      | int      | 2       | Interval between ticks on the charts.             |
+| `show_subplot_titles`| bool    | False   | Whether to display titles above each subplot.     |
+| `subplot_titles`    | list[str]| ['X chart', 'Histogram'] | Titles for  subplots.            |
+| `ave_linestyle`     | str      | '-'     | Line style for average/central line.              |
+| `xchart_linestyle`  | str      | '-'     | Line style for the X chart plot.                  |
+| `show_hist_mean`    | bool     | False   | Whether to show the mean marker on the histogram. |
+| `mean_marker_size`  | int      | 150     | Size of the scatter plot mean marker.             |
+| `arrow_linewidth`   | int      | 0.25    | Line width for annotation arrows.                 |
+| `ac_markersize`     | int      | 9       | Marker size for assignable causes on X chart.     |
+| `legend_fontsize`   | int      | 12      | Font size for legend text.                        |
+| `show_capabilities` | bool     | True    | Whether to display process capability indices.    |
+| `restrict_UPL`      | bool     | False   | Whether to restrict the Upper Process Limit.      |
+| `restrict_LPL`      | bool     | True    | Whether to restrict the Lower Process Limit.      |
+| `label_fontsize`    | int      | 10      | Font size for axis labels.                        |
+| `xtick_fontsize`    | int      | 10      | Font size for x-axis tick labels.                 |
+| `sub_title_fontsize`| int      | 14      | Font size for subplot titles.                     |
+| `show_xticks`       | bool     | True    | Whether to display x-axis ticks on subplots.      |
+| `show_limit_values` | bool     | True    | Whether to display numeric limit values.          |
+| `rotate_labels`     | int      | 0       | Rotation angle for x-axis labels.                 |
+| `show`              | bool     | False   | Whether to display the figure immediately.        |
+
+#### ComboChartConfig Usage Example
+
+```python
+
+import pandas as pd
+from process_improvement.charts.combo_chart import combo_chart
+from process_improvement.charts.utils import ComboChartConfig
+
+# Example DataFrame
+df = pd.DataFrame({
+    "date": ["2025-01-01", "2025-01-02", "2025-01-03", "2025-01-04"],
+    "value": [5.2, 5.5, 5.1, 5.8]
+})
+
+# Create configuration
+config = ComboChartConfig(
+    figsize=(15, 6),
+    dpi=350,
+    gridspec_width_ratios={'width_ratios': [3, 1]},
+    round_value=2,
+    tickinterval=2,
+
+    show_subplot_titles=False,
+    subplot_titles=["X chart", "Histogram"],
+
+    ave_linestyle='-',
+    xchart_linestyle='-',
+    show_hist_mean=False,
+
+    mean_marker_size=150,
+    arrow_linewidth=0.25,
+    ac_markersize=9,
+
+    legend_fontsize=12,
+    show_capabilities=True,
+
+    restrict_UPL=False,
+    restrict_LPL=True,
+
+    label_fontsize=10,
+    xtick_fontsize=10,
+    sub_title_fontsize=14,
+
+    show_xticks=True,
+    show_limit_values=True,
+    rotate_labels=0,
+
+    show=False
+)
+
+# Generate combo chart (X chart + histogram)
+result = combo_chart(
+    df=df,
+    values_column="value",
+    xchart_labels_column="date",
+    USL=6,
+    LSL=5,
+    Target=5.5,
+    histogram_bins='auto',
+    show_limit_values=True,
+    chart_title="Sample Combo Chart",
+    config=config
+)
+```
+
+### TaguchiLossConfig
+
+The `TaguchiLossConfig` class defines configuration settings for a Taguchi loss function chart.
+
+| Parameter           | Type     | Default | Description                                       |
+|---------------------|----------|---------|---------------------------------------------------|
+| `figsize`           | tuple    | (15,5)  | Figure size `(width, height)`                     |
+| `dpi`               | int      | 350     | Resolution of the figure in dots per inch.        |
+| `round_value`       | int      | 2       | Decimal precision for calculated statistics.      |
+| `legend_round_value`| int      | 2       | Decimal precision for values shown in the legend. |
+| `legend_loc`        | str      | 'best'  | Location of the legend.                           |
+| `lx_linewidth`      | float    | 3       | Line width of the Taguchi loss function plot.     |
+| `lx_color`          | str      | 'black' | Color of the Taguchi loss function line.          |
+| `lx_linestyle`      | str      | '-'     | Line style for the Taguchi loss function.         |
+| `histogram_color`   | str      | 'tab:blue'| Color of the histogram overlay.                 |
+| `show_label_values` | bool     | True    | Whether to display numeric annotation values.     |
+| `safety_factor`     | float    | 1.3     | Multiplier for vertical spacing of labels.        |
+| `label_fontsize`    | int      | 14      | Font size for annotation labels.                  |
+| `show_target_label` | bool     | True    | Whether to display the target value annotation.   |
+| `show_mean_label`   | bool     | True    | Whether to display the mean value annotation.     |
+| `target_arrow_color`| str      | 'black' | Color of the arrow pointing to the target value.  |
+| `show_indices`      | bool     | False   | Whether to display the process capability indices.|
+| `show_grid`         | bool     | True    | Whether to display a grid in the background.      |
+| `align_ticks_with_bins`| str   | 'None'  | Alignment of xticks relative to histogram bins.   |
+| `rotate_xtick_labels`  | int   | 0       | Rotation angle for x-axis tick labels.            |
+| `show_xtick_labels` | bool     | True    | Whether to display x-axis tick labels.            |
+| `remove_all_spines` | bool     | True    | Whether to remove all chart spines (borders).     |
+
+#### TaguchiLossConfig Usage Example
+
+```python
+
+import pandas as pd
+from process_improvement.charts.taguchi_loss import taguchi_loss_function
+from process_improvement.charts.utils import TaguchiLossConfig
+
+# Example data
+data = pd.Series([5.2, 5.5, 5.1, 5.8, 5.6, 5.3, 5.4])
+
+# Create configuration
+config = TaguchiLossConfig(
+    figsize=(15, 5),
+    dpi=350,
+    round_value=2,
+    legend_round_value=2,
+    legend_loc='best',
+
+    lx_linewidth=3,
+    lx_color='black',
+    lx_linestyle='-',
+    histogram_color='tab:blue',
+
+    show_label_values=True,
+    safety_factor=1.3,
+    label_fontsize=14,
+
+    show_target_label=True,
+    show_mean_label=True,
+    target_arrow_color='black',
+    show_indices=False,
+
+    show_grid=True,
+    align_ticks_with_bins='None',
+    rotate_xtick_labels=0,
+    show_xtick_labels=True,
+    remove_all_spines=True
+)
+
+# Generate Taguchi Loss function overlayed on a histogram
+result = taguchi_loss_function(
+    data=data,
+    USL=6,
+    LSL=5,
+    Target=5.5,
+    bins='auto',
+    config=config
+)
+```
+
+### LimitChartConfig
+
+The `LimitChartConfig` class defines configuration settings for a limit chart and a grid of limit charts called a `limit_chart_network_analysis`.
+
+| Parameter           | Type     | Default | Description                                       |
+|---------------------|----------|---------|---------------------------------------------------|
+| `figsize`           | tuple    | (15,5)  | Figure size `(width, height)`                     |
+| `dpi`               | int      | 350     | Resolution of the figure in dots per inch.        |
+| `show`              | bool     | False   | Display chart immediately.                        |
+| `chart_title`       | str      | 'Limit Chart'| Chart title.                                 |
+| `show_chart_title`  | bool     | False   | Display the chart title.                          |
+| `tickinterval`      | int      | 2       | X-axis tick interval.                             |
+| `rotate_labels`     | int      | 0       | Rotation angle for x-axis labels.                 |
+| `xtick_fontsize`    | int      | 10      | Font size for x-axis labels.                      |
+| `show_xticks`       | bool     | True    | Display x-axis ticks.                             |
+| `show_ytick_labels` | bool     | True    | Display y-axis labels.                            |
+| `label_fontsize`    | int      | 10      | Font size for axis labels.                        |
+| `limit_chart_ylabel`| str      | ''      | Label for the y-axis.                             |
+| `linestyle`         | str      | '-'     | Style of main data line.                          |
+| `mean_linestyle`    | str      | '-'     | Style of mean/central line.                       |
+| `target_line_color` | str      | 'green' | Color of the target line.                         |
+| `target_linestyle`  | str      | '--'    | Style of the target line.                         |
+| `show_label_values` | bool     | True    | Show numeric annotations.                         |
+| `show_mean`         | bool     | True    | Show the mean line.                               |
+| `round_value`       | int      | 2       | Decimal places for calculated values.             |
+
+#### LimitChartConfig Usage Example
+
+```python
+
+import pandas as pd
+from process_improvement.charts.limit_charts import limit_chart
+from process_improvement.charts.utils import LimitChartConfig
+
+# Example data
+df = pd.DataFrame({
+    "Measurement": [5.2, 5.5, 5.1, 5.8, 5.6, 5.3, 5.4],
+    "Batch": ["A", "B", "C", "D", "E", "F", "G"]
+})
+
+# Create configuration
+config = LimitChartConfig(
+    figsize=(15, 5),
+    dpi=350,
+    show=False,
+    chart_title='Limit Chart',
+    show_chart_title=False,
+
+    tickinterval=2,
+    rotate_labels=0,
+    xtick_fontsize=10,
+    show_xticks=True,
+    show_ytick_labels=True,
+    label_fontsize=10,
+    limit_chart_ylabel='',
+
+    linestyle='-',
+    mean_linestyle='-',
+
+    target_line_color='tab:green',
+    target_linestyle='--',
+
+    show_label_values=True,
+    show_mean=True,
+    round_value=2
+)
+
+# Generate the Limit Chart
+result = limit_chart(
+    df=df,
+    values="Measurement",
+    x_labels="Batch",
+    USL=6,
+    LSL=5,
+    Target=5.5,
+    config=config
+)
+```
+
+#### LimitChartConfig Usage Example with limit_chart_network_analysis
+
+```python
+
+import pandas as pd
+from process_improvement.charts.limit_charts import limit_chart_network_analysis
+from process_improvement.charts.utils import LimitChartConfig
+
+# Example dataframes
+df1 = pd.DataFrame({
+    "Measurement": [5.2, 5.5, 5.1, 5.8],
+    "Batch": ["A", "B", "C", "D"]
+})
+
+df2 = pd.DataFrame({
+    "Measurement": [5.6, 5.3, 5.4, 5.7],
+    "Batch": ["E", "F", "G", "H"]
+})
+
+df3 = pd.DataFrame({
+    "Measurement": [5.1, 5.2, 5.3, 5.5],
+    "Batch": ["I", "J", "K", "L"]
+})
+
+df4 = pd.DataFrame({
+    "Measurement": [5.0, 5.3, 5.6, 5.4],
+    "Batch": ["M", "N", "O", "P"]
+})
+
+df_list = [df1, df2, df3, df4]
+
+# Create configuration
+config = LimitChartConfig(
+    figsize=(8, 8),
+    dpi=350,
+    show=False,
+    chart_title='Limit Chart',
+    show_chart_title=False,
+
+    tickinterval=2,
+    rotate_labels=0,
+    xtick_fontsize=10,
+    show_xticks=True,
+    show_ytick_labels=True,
+    label_fontsize=10,
+    limit_chart_ylabel='',
+
+    linestyle='-',
+    mean_linestyle='-',
+
+    target_line_color='tab:green',
+    target_linestyle='--',
+
+    show_label_values=True,
+    show_mean=True,
+    round_value=2
+)
+
+# Generate a network of Limit Charts
+result = limit_chart_network_analysis(
+    df_list=df_list,
+    values="Measurement",
+    x_labels="Batch",
+    USL=6,
+    LSL=5,
+    nrows=2,
+    ncols=2,
+    Target=5.5,
+    subplot_titles=["Line 1", "Line 2", "Line 3", "Line 4"],
+    config=config
+)
+```
+
+## Function Descriptions and Example Figures
+
+Example figures and descriptions for each one of the charts in this library.
+
+### Capability Histogram
+
+The `capability_histogram` function plots a histogram of process data in the context of the Upper Specification Limit (USL), Lower Specification Limit (LSL), target, and mean. This allows users to understand process behavior in the context of the **voice of the customer**. 
+
+The function also calculates the process capability indices: the capability ratio (Cp), the centered capability ratio (Cpk), the performance ratio (Pp), and the centered performance ratio (Ppk). To learn more about these indices visit [BrokenQuality.com/process-capability-indices](https://www.brokenquality.com/process-capability-indices).
+
+![Capability Histogram Example](docs/figures/capability_histogram_example.png)
+
+### Combo Chart
+
+The `combo_chart` function displays the X chart portion of an XmR chart with a horizontally oriented histogram. The shared y-axis between the subplots allows for direct visual comparison between the voice of the process, defined by the Upper Process Limit (UPL) and the Lower Process Limit (LPL), compares with the voice of the customer, defined by the Upper Specification Limit (USL) and the Lower Specification Limit (LSL).  
+
+![Combo Chart Example](docs/figures/combo_chart_example.png)
+
+### Limit Chart
+
+The `limit_chart` function plots a time series or running record of process data with the additional context of the Upper Specification Limit (USL), Lower Specification Limit (LSL), target, and process mean. This allows users to contextualize how a process has changed over time with respect to the voice of the customer (i.e., the specification limits). Values that fall outside of the specification limits are colored red.
+
+![Limit Chart Example](docs/figures/limit_chart_example.png)
+
+### Limit Chart Network Analysis
+
+The `limit_chart_network_analysis` function plots a grid of time series or running records that contain process data from multiple system elements performing the same task. Like the `limit_chart` function, each subplot in the grid displays the Upper Specification Limit (USL), Lower Specification Limit (LSL), target, and mean in each subplot. This allows users to compare how different elements performing the same task are operating with respect to each other and with respect to the voice of the customer (i.e., the specification limits).
+
+![Limit Chart Network Analysis Example](docs/figures/limit_chart_network_analysis_example.png)
+
+### Network Analysis
+
+The `network_analysis` function plots a grid of X charts containing process data from multiple elements performing the same task and using the same performance or quality metric. Like the `xmr_chart` function, each subplot in the grid displays the associated Upper Process Limit (UPL), Lower Process Limit (LPL), and process mean. This allows users to compare how different elements performing the same task are operating with respect to each other and with respect to the voice of the process (i.e., the process limits).
+
+![Network Analysis Example](docs/figures/network_analysis_example.png)
+
+### Taguchi Loss Function
+
+The `taguchi_loss_function` function plots the quadratic loss function called the Taguchi loss function with respect to the specified Upper Specification Limit (USL), Lower Specification Limit (LSL), target and process mean. The vertex of the parabola sits at the target value. The further the mean deviates from the target, the larger the loss due to poor quality. 
+
+Loss increases quadratically until the function reaches the specification limits. Here, the maximum loss due to poor quality is incurred. In instances where rework can be performed, a portion of the loss can be recovered.
+
+The `taguchi_loss_function` function allows users to optionally display process data as a histogram. 
+
+![Taguchi Loss Function Example](docs/figures/taguchi_loss_example.png)
+
+### XmR Chart
+
+The `xmr_chart` function generates an XmR chart of process data. The XmR chart is composed of two figures: the X chart and the mR chart. 
+
+The X chart plots logically comparable individual values along with the Upper Process Limit (UPL), Lower Process Limit (LPL), and process mean. The mR chart plots the moving ranges associated with the logically comparable individual values along with the Upper Range Limit (URL) and the average moving range.
+
+When all of the values fall inside the process limits, the underlying causal system is characterized as **predictable**. The future behavior of a predictable process can be anticipated within limits because only common causes of routine variation influence process behavior. To improve a predictable process, new technology, equipment, materials, methods, or procedures must be introduced.
+
+When one or more values fall outside the process limits, the underlying causal system is characterized as **unpredictable**. The future behavior of an unpredictable process **cannot** be predicted within limits because both common causes of routine variation and assignable causes of exceptional variation influence process behavior. To improve a predictable process, the assignable causes must be understood and eliminated.
+
+![XmR Chart Example](docs/figures/xmr_chart_example.png)
+
+### XmR Chart Comparison
+
+The `xmr_comparison` function generates a grid of XmR charts that contain process data from different process steps or stages. This function helps users evaluate how a process has changed over time.
+
+![XmR Comparison Example](docs/figures/xmr_comparison_example.png)
+
+## Project Structure
+
+The library project structure is as follows:
+
+```
+process_improvement/
+├── charts/
+│   ├── capability_histogram.py
+│   ├── combo_chart.py
+│   ├── limit_charts.py
+│   ├── results.py
+│   ├── taguchi_loss.py
+│   ├── utils.py
+│   └── xmr_charts.py
+├── calculations/
+│   ├── capability_calculations.py
+│   ├── loss_function_calculations.py
+│   └── xmr_calculations.py
+├── data/
+│   ├── 2170_battery_cells.csv
+│   ├── 18650_battery_cells.csv
+│   ├── automated_manufacturing_part_lengths.csv
+│   ├── milikans_electron_charge_observations.csv
+│   ├── monthly_united_states_trade_deficits_2024.csv
+│   ├── OP200_weekly_first_pass_yield.csv
+│   ├── quarterly_sales_by_region.csv
+│   ├── shewharts_resistance_measurements.csv
+│   ├── software_verification_death_to_birth_rates.csv
+│   └── software_verification_resistance_measurements.csv
+├── tests/
+│   ├── test_figures/
+│   ├── test_capability_histogram.py
+│   ├── test_network_analysis.py
+│   ├── test_xmr_chart.py
+│   └── test_xmr_comparison.py
+├── docs/
+│   ├── figures/
+│   │   ├── capability_histogram_example.png
+│   │   ├── combo_chart_example.png
+│   │   ├── limit_chart_example.png
+│   │   ├── limit_chart_network_analysis_example.png
+│   │   ├── network_analysis_example.png
+│   │   ├── taguchi_loss_example.png
+│   │   ├── xmr_chart_example.png
+│   │   └── xmr_comparison_example.png
+|   └── notebooks/
+│        ├── xmr_chart_demo.ipynb
+│        └── capability_histogram_demo.ipynb
+└── README.md
+```
 
 ## Contributing
-To contribute to DataDrivenImprovement, follow these steps:
-1. Fork this repository.
-2. Create a branch: ```git checkout -b <branch_name>```. 
-3. Make your changes and commit them:  ```git commit -m '<commit_message>'```
-4. Push to the original branch: ```git push origin <DataDrivenImprovement>/<location>```.
-5. Create the pull request.
 
-Alternatively see the GitHub documentation on [creating a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request). 
-## Contact
-If you want to contact me you can reach me at [James.Lehner@gmail.com](James.Lehner@gmail.com).
+- Follow PEP8 / Black formatting
+- Add unit tests for new features
+- Run `pytest` before submitting pull requests
+
 ## License
-This project uses the following license: MIT License.
-## Additional Information
-- **Parts of a Process Behavior Chart**: Invented by Dr. Walter Shewhart in the mid-1920s at Bell Laboratories, PBCs are composed of two charts: the `X-chart` and the `mR-chart`. Where the `X-chart` bounds the variation associated with individual values the `mR-chart` bounds the value-to-value variation. This is made possible through the calculation of a trio of limits known as process limits. The `upper process limit (UPL)` and `lower process limit (LPL)` are used on the `X-chart`. The `upper range limit (URL)` is used on the `mR-chart`. 
-- **Two types of variation**: Inherent in the characterizations of `predictable` and `unpredictable` is the tyoe of variation action a process. A predictable process is influenced by only `routine` causes of variation. An `unpredictable` process is influenced by both `routine causes of variation` and `assignable` causes of variation.  
-- **Improvement**: 
-	- **Predictable**: To improve a predictable process `routine` causes of variation must be `identified`, `understood`, and `mitigated`.  This requires fundamental changes to the process must be made. These include, but are not limited to, changes to raw materials, adjustment to system settings, redesign of stations, redesign of software, calibration of measurement systems. 
-	- **Unpredictable**: To improve an unpredictable process  `assignable` causes of variation must be `identifed`, `understood`, and `eliminated`. To begin this process, an investigation into values that fall outside the process limits on the `PBC` must be performed. 
-- For those unfamiliar with process behavior charts (control charts) that are interested in learning more visit [BrokenQuality.com](https://www.brokenquality.com).
+
+MIT License. See LICENSE file for details.
