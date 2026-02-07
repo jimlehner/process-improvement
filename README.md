@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # process_improvement
 
 [![PyPI Version](https://img.shields.io/pypi/v/process-improvement)](https://pypi.org/project/process-improvement/)
