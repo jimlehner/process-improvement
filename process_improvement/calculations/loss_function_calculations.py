@@ -1,0 +1,109 @@
+from typing import Optional
+import pandas as pd
+import numpy as np
+
+from process_improvement.charts.results import TaguchiLossCalcResults
+
+def taguchi_loss_calcs(
+        USL: float,
+        LSL: float,
+        Target: Optional[float] = None
+        ) -> dict[str, float or list]:
+    """
+    Compute quadratic loss function (Taguchi loss function) values over a
+    specification range.
+
+    This function generates the X and Y values for a Taguchi-style quadratic
+    loss function based on the provided specification limits and target.
+    The loss function represents the economic loss associated with deviation
+    from the target value, increasing quadratically as values move away from
+    target.
+
+    The generated domain extends beyond the specification limits to provide
+    visual context for plotting. Outside the specification limits, the loss
+    is held constant at the boundary loss value to create a piecewise
+    representation suitable for visualization.
+
+    Parameters
+    ----------
+    USL : float
+        Upper Specification Limit.
+
+    LSL : float
+        Lower Specification Limit.
+
+    Target : float, optional
+        Target (nominal) value. If None, the target is set to the midpoint
+        between USL and LSL.
+
+    Returns
+    -------
+    TaguchiLossCalcResults
+        Dataclass containing:
+
+        - df : pandas.DataFrame
+            DataFrame with columns:
+              - 'X values' : numpy.ndarray
+                  X-axis values spanning slightly beyond the specification limits.
+              - 'Y values' : list[float]
+                  Corresponding Taguchi quadratic loss values.
+
+    Raises
+    ------
+    ValueError
+        If USL is less than or equal to LSL.
+
+    Notes
+    -----
+    - The loss function is defined as:
+
+        L(x) = k (x - Target)^2
+
+      where k is a numerica constant typically expressed in dollars ($).
+
+    - Values outside the specification limits are clamped to the loss at
+      the nearest specification boundary to produce a flat extension region.
+    - The extended range (± tolerance/4) is intended for visualization and
+      does not affect capability calculations.
+
+    See Also
+    --------
+    taguchi_loss_function
+    """
+
+    # --- VALIDATION ---
+    if USL <= LSL:
+        raise ValueError("USL must be greater than LSL")   
+
+    # Set default target if not provided 
+    if Target is None:
+        Target = (USL + LSL) / 2
+
+    # --- CONFIGURATION ---
+    tolerance = USL - LSL
+
+    extension = tolerance / 4
+
+    # --- TAGUCHI (QUADRATIC) LOSS FUNCTION ---
+    # Create list of values used to generate the parabola
+    x_values = np.linspace(LSL - extension, USL + extension, 500)
+
+    # List for y values based on x values
+    y_values = []
+
+    # Piecewise loss function
+    for value in x_values:
+        if value <= LSL:
+            y_values.append(tolerance * (Target - LSL) ** 2)
+        elif value >= USL:
+            y_values.append(tolerance * (USL - Target) ** 2)
+        else:
+            y_values.append(tolerance * (value - Target) ** 2)
+    
+    # Results dataframe
+    results_df = pd.DataFrame({'X values':x_values,
+                                'Y values':y_values})
+    
+    return TaguchiLossCalcResults(
+        df=results_df
+    )

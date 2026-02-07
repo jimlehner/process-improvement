@@ -1,0 +1,286 @@
+Stage,Sample,X position,Units
+Baseline,1,0.681,mm
+Baseline,2,0.565,mm
+Baseline,3,0.577,mm
+Baseline,4,0.572,mm
+Baseline,5,0.565,mm
+Baseline,6,0.618,mm
+Baseline,7,0.454,mm
+Baseline,8,0.166,mm
+Baseline,9,0.875,mm
+Baseline,10,0.461,mm
+Baseline,11,0.548,mm
+Baseline,12,0.51,mm
+Baseline,13,0.378,mm
+Baseline,14,0.586,mm
+Baseline,15,0.603,mm
+Baseline,16,1.021,mm
+Baseline,17,0.968,mm
+Baseline,18,0.487,mm
+Baseline,19,0.092,mm
+Baseline,20,0,mm
+Baseline,21,0.433,mm
+Baseline,22,0.591,mm
+Baseline,23,0.455,mm
+Baseline,24,0.219,mm
+Baseline,25,0.387,mm
+Baseline,26,0.824,mm
+Baseline,27,0.644,mm
+Baseline,28,2.193,mm
+Baseline,29,0.59,mm
+Baseline,30,0.619,mm
+Baseline,31,0.546,mm
+Baseline,32,0.544,mm
+Baseline,33,0.657,mm
+Baseline,34,0.423,mm
+Baseline,35,0.404,mm
+Baseline,36,0.591,mm
+Baseline,37,0,mm
+Baseline,38,0.65,mm
+Baseline,39,0.544,mm
+Baseline,40,0.577,mm
+Baseline,41,0.506,mm
+Baseline,42,0.369,mm
+Baseline,43,0.312,mm
+Baseline,44,0.692,mm
+Baseline,45,0.839,mm
+Baseline,46,0.778,mm
+Baseline,47,0.645,mm
+Baseline,48,0,mm
+Baseline,49,0.198,mm
+Baseline,50,0.631,mm
+Baseline,51,0.647,mm
+Baseline,52,0.859,mm
+Baseline,53,0.396,mm
+Baseline,54,0.719,mm
+Baseline,55,0.983,mm
+Baseline,56,0.708,mm
+Baseline,57,0.637,mm
+Baseline,58,0.623,mm
+Baseline,59,0.686,mm
+Baseline,60,0.442,mm
+Baseline,61,0.622,mm
+Baseline,62,0.611,mm
+Baseline,63,0.59,mm
+Baseline,64,0.488,mm
+Baseline,65,0.79,mm
+Baseline,66,0.271,mm
+Baseline,67,0.547,mm
+Baseline,68,0.654,mm
+Baseline,69,0.65,mm
+Baseline,70,0.556,mm
+Baseline,71,0.587,mm
+Baseline,72,0.26,mm
+Baseline,73,0.756,mm
+Baseline,74,0.662,mm
+Baseline,75,0.754,mm
+Baseline,76,0.645,mm
+Baseline,77,0,mm
+Baseline,78,0.235,mm
+Baseline,79,0.575,mm
+Baseline,80,0.496,mm
+Baseline,81,0.722,mm
+Baseline,82,0,mm
+Baseline,83,0.515,mm
+Baseline,84,0.824,mm
+Baseline,85,0.182,mm
+Baseline,86,0.639,mm
+Baseline,87,0.526,mm
+Baseline,88,0.837,mm
+Baseline,89,0.507,mm
+Baseline,90,0.053,mm
+Baseline,91,0.226,mm
+Baseline,92,0.358,mm
+Baseline,93,0.373,mm
+Baseline,94,0.457,mm
+Baseline,95,0.369,mm
+Initial change,1,0.489,
+Initial change,2,0.467,
+Initial change,3,0.451,
+Initial change,4,0.513,
+Initial change,5,0.976,
+Initial change,6,0.926,
+Initial change,7,0,
+Initial change,8,0.559,
+Initial change,9,0.667,
+Initial change,10,0.921,
+Initial change,11,0.605,
+Initial change,12,0.438,
+Initial change,13,0.724,
+Initial change,14,0.385,
+Initial change,15,0.69,
+Initial change,16,0.88,
+Initial change,17,1.022,
+Initial change,18,0.708,
+Initial change,19,0,
+Initial change,20,0,
+Initial change,21,0,
+Initial change,22,0.262,
+Initial change,23,2.491,
+Initial change,24,0.589,
+Initial change,25,0.558,
+Initial change,26,0.832,
+Initial change,27,0.767,
+Initial change,28,0.763,
+Initial change,29,0.873,
+Initial change,30,0.799,
+Initial change,31,0.223,
+Initial change,32,0.757,
+Initial change,33,0.541,
+Initial change,34,0.909,
+Initial change,35,0.647,
+Initial change,36,0.443,
+Initial change,37,0.285,
+Initial change,38,0.437,
+Initial change,39,0.647,
+Initial change,40,0.525,
+Initial change,41,0.634,
+Initial change,42,0.685,
+Initial change,43,0.36,
+Initial change,44,0.075,
+Initial change,45,2.097,
+Initial change,46,0.972,
+Initial change,47,0,
+Initial change,48,0,
+Initial change,49,0,
+Initial change,50,0,
+Initial change,51,0.138,
+Initial change,52,0.193,
+Initial change,53,0.776,
+Initial change,54,2.199,
+Initial change,55,0.83,
+Initial change,56,0.556,
+Initial change,57,0.401,
+Initial change,58,2.67,
+Initial change,59,0.614,
+Initial change,60,0.543,
+Initial change,61,0.853,
+Initial change,62,0.686,
+Initial change,63,0.514,
+Initial change,64,0.543,
+Initial change,65,0.5,
+Initial change,66,0,
+Initial change,67,0.841,
+Initial change,68,0.751,
+Initial change,69,0.561,
+Initial change,70,0.676,
+Initial change,71,0.554,
+Initial change,72,0.547,
+Initial change,73,0.874,
+Initial change,74,0.951,
+Initial change,75,0.643,
+Initial change,76,0.901,
+Initial change,77,0,
+Initial change,78,0,
+Initial change,79,0.335,
+Initial change,80,0,
+Initial change,81,0,
+Initial change,82,0.53,
+Initial change,83,0.544,
+Initial change,84,0.818,
+Initial change,85,0.603,
+Initial change,86,0.721,
+Initial change,87,0.509,
+Initial change,88,0.692,
+Initial change,89,0.867,
+Initial change,90,0.919,
+Initial change,91,0.708,
+Initial change,92,0.666,
+Initial change,93,0.512,
+Initial change,94,0.642,
+Initial change,95,0.671,
+Secondary change,1,0.757,
+Secondary change,2,0.851,
+Secondary change,3,0.51,
+Secondary change,4,0.667,
+Secondary change,5,1.026,
+Secondary change,6,0.705,
+Secondary change,7,0.909,
+Secondary change,8,0.764,
+Secondary change,9,0.87,
+Secondary change,10,0.935,
+Secondary change,11,0.92,
+Secondary change,12,0.881,
+Secondary change,13,0.793,
+Secondary change,14,0.833,
+Secondary change,15,0.744,
+Secondary change,16,0.821,
+Secondary change,17,0.772,
+Secondary change,18,0.891,
+Secondary change,19,0.963,
+Secondary change,20,0.713,
+Secondary change,21,0.511,
+Secondary change,22,0.589,
+Secondary change,23,0.638,
+Secondary change,24,0.636,
+Secondary change,25,0.713,
+Secondary change,26,0.696,
+Secondary change,27,0.912,
+Secondary change,28,0.79,
+Secondary change,29,0.66,
+Secondary change,30,0.731,
+Secondary change,31,0.699,
+Secondary change,32,0.789,
+Secondary change,33,0.742,
+Secondary change,34,0.95,
+Secondary change,35,0.802,
+Secondary change,36,0.771,
+Secondary change,37,0.733,
+Secondary change,38,0.863,
+Secondary change,39,0.827,
+Secondary change,40,0.836,
+Secondary change,41,0.861,
+Secondary change,42,0.676,
+Secondary change,43,0.698,
+Secondary change,44,0.596,
+Secondary change,45,0.794,
+Secondary change,46,0.688,
+Secondary change,47,0.798,
+Secondary change,48,0.807,
+Secondary change,49,0.918,
+Secondary change,50,0.678,
+Secondary change,51,0.599,
+Secondary change,52,0.653,
+Secondary change,53,0.866,
+Secondary change,54,0.684,
+Secondary change,55,0.784,
+Secondary change,56,0.711,
+Secondary change,57,0.777,
+Secondary change,58,0.74,
+Secondary change,59,0.717,
+Secondary change,60,0.679,
+Secondary change,61,0.964,
+Secondary change,62,0.701,
+Secondary change,63,0.806,
+Secondary change,64,0.69,
+Secondary change,65,0.875,
+Secondary change,66,0.809,
+Secondary change,67,0.799,
+Secondary change,68,0.99,
+Secondary change,69,0.933,
+Secondary change,70,0.971,
+Secondary change,71,0.575,
+Secondary change,72,0.903,
+Secondary change,73,0.754,
+Secondary change,74,0.785,
+Secondary change,75,0.791,
+Secondary change,76,0.743,
+Secondary change,77,0.732,
+Secondary change,78,0.767,
+Secondary change,79,0.76,
+Secondary change,80,0.688,
+Secondary change,81,0.714,
+Secondary change,82,0.844,
+Secondary change,83,0.886,
+Secondary change,84,0.678,
+Secondary change,85,0.631,
+Secondary change,86,0.846,
+Secondary change,87,0.638,
+Secondary change,88,0.602,
+Secondary change,89,0.888,
+Secondary change,90,0.709,
+Secondary change,91,0.738,
+Secondary change,92,0.715,
+Secondary change,93,0.783,
+Secondary change,94,0.831,
+Secondary change,95,0.785,

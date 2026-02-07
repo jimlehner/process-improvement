@@ -1,0 +1,33 @@
+[project]
+name = "process-improvement"
+version = "1.1.5"
+description = "A Python library for performing calculations and generating figures that facilitate an understanding of process variation."
+readme = { file = "README.md", content-type = "text/markdown" }
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+
+authors = [
+    { name = "Jim Lehner", email = "james.lehner@gmail.com" }
+]
+
+dependencies = [
+    "numpy>=1.26.0",
+    "pandas>=2.1.0",
+    "matplotlib>=3.7.1",
+    "seaborn>=0.13.2"
+]
+
+[project.scripts]
+process_improvement = "process_improvement.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/jimlehner/process-improvement"
+Repository = "https://github.com/jimlehner/process-improvement"
+Issues = "https://github.com/jimlehner/process-improvement/issues"
+
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages]
+find = {}

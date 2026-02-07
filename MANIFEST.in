@@ -1,0 +1,12 @@
+# Include README and LICENSE
+include README.md
+include LICENSE
+
+# Include all images in docs
+recursive-include docs/figures *.png
+
+# Include Jupyter notebooks in docs
+recursive-include docs/notebooks *.ipynb
+
+# Include CSV datasets inside the package
+recursive-include process_improvement/data *.csv

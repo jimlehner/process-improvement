@@ -1,0 +1,21 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints
+
+# Virtual environments
+venv/
+.env/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Distribution / build
+build/
+dist/
+*.egg-info/
+.eggs/
