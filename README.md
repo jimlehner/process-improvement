@@ -1,8 +1,8 @@
 # process_improvement
 
-![PyPI version](https://img.shields.io/pypi/v/process-improvement)
-![Build Status](https://img.shields.io/github/actions/workflow/status/jimlehner/process-improvement/ci.yml)
-![License](https://img.shields.io/pypi/l/process-improvement)
+[![PyPI version](https://img.shields.io/pypi/v/process-improvement)](https://pypi.org/project/process-improvement/)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/jimlehner/process-improvement/ci.yml)](https://github.com/jimlehner/process-improvement/actions)
+[![License](https://img.shields.io/pypi/l/process-improvement)](https://pypi.org/project/process-improvement/)
 
 A Python library for performing calculations and generating figures that facilitate an understanding of process **variation**.
 
@@ -14,7 +14,7 @@ The intent of this library is to provide a practical alternative to subscription
 
 It is part of a broader project called **The Broken Quality Initiative**, which aims to provide manufacturing, process, and quality engineers with the tools and knowledge required to reduce costs and improve quality.
 
-To learn more about how to reduce costs and improve quality by understanding variation, visit [BrokenQuality.com](https://brokenquality.com).
+To learn more about the project, visit [BrokenQuality.com](https://brokenquality.com).
 
 ## Table of Contents
 - [Installation](#installation)
@@ -161,7 +161,7 @@ The `XmRChartConfig` class defines configuration settings for an XmR chart.
 | `round_value`       | int      | 2       | Number of decimal places for rounding.            |
 
 
-#### XmRChartConfig Usage Example
+#### Usage Example
 
 ```python
 
@@ -234,7 +234,7 @@ The `NetworkAnalysisConfig` class defines configuration settings for a grid of X
 | `restrict_UPL`      | bool     | False   | Whether to restrict plotting above UPL.           |
 | `restrict_LPL`      | bool     | True    | Whether to restrict plotting below LPL.           |
 
-#### NetworkAnalysisConfig Usage Example
+#### Usage Example
 
 ```python
 
@@ -330,7 +330,8 @@ The `CapabilityHistogramConfig` class defines configuration settings for a capab
 | `align_ticks_bins`  | str      | 'None'  | Alignment of x-axis ticks.                        |
 | `rotate_tick_labels`| int      | 0       | Rotation angle for x-axis tick labels.            |
 | `show_capabilities` | bool     | True    | Whether to display Cp, Cpk, Pp, and Ppk.          |
-#### CapabilityHistogramConfig Usage Example
+
+#### Usage Example
 
 ```python
 
@@ -412,7 +413,7 @@ The `ComboChartConfig` class defines configuration settings for a combo chart.
 | `rotate_labels`     | int      | 0       | Rotation angle for x-axis labels.                 |
 | `show`              | bool     | False   | Whether to display the figure immediately.        |
 
-#### ComboChartConfig Usage Example
+#### Usage Example
 
 ```python
 
@@ -504,7 +505,7 @@ The `TaguchiLossConfig` class defines configuration settings for a Taguchi loss 
 | `show_xtick_labels` | bool     | True    | Whether to display x-axis tick labels.            |
 | `remove_all_spines` | bool     | True    | Whether to remove all chart spines (borders).     |
 
-#### TaguchiLossConfig Usage Example
+#### Usage Example
 
 ```python
 
@@ -581,7 +582,7 @@ The `LimitChartConfig` class defines configuration settings for a limit chart.
 | `show_mean`         | bool     | True    | Show the mean line.                               |
 | `round_value`       | int      | 2       | Decimal places for calculated values.             |
 
-#### LimitChartConfig Usage Example
+#### Usage Example
 
 ```python
 
@@ -660,7 +661,7 @@ The `LimitChartNetworkAnalysisConfig` class defines configuration settings for a
 | show_mean           | bool     | True    | Display the mean line on subplots.                |
 | round_value         | int      | 2       | Decimal places for rounding calculated values.    |
 
-#### LimitChartNetworkAnalysisConfig Usage Example
+#### Usage Example
 
 ```python
 
@@ -815,9 +816,27 @@ process_improvement/
 │   └── test_xmr_comparison.py
 ├── docs/
 │   ├── figures/
+│   │   ├── capability_histogram_example.png
+│   │   ├── combo_chart_example.png
+│   │   ├── limit_chart_example.png
+│   │   ├── limit_chart_network_analysis_example.png
+│   │   ├── network_analysis_example.png
+│   │   ├── taguchi_loss_function_example.png
+│   │   ├── xmr_chart_example.png
+│   │   └── xmr_comparison_example.png
 │   └── notebooks/
+│       ├── capability_histogram_demo.ipynb
+│       ├── combo_chart_demo.ipynb
+│       ├── limit_chart_demo.ipynb
+│       ├── limit_chart_network_analysis_demo.ipynb
+│       ├── network_analysis_demo.ipynb
+│       ├── taguchi_loss_function_demo.ipynb
+│       ├── xmr_chart_demo.ipynb
+│       └── xmr_comparison_demo.ipynb
 └── process_improvement/      <- Inner folder / Python package
     ├── __init__.py
+    ├── __main__.py
+    ├── cli.py
     ├── data_loader.py
     ├── charts/
     │   ├── capability_histogram.py
@@ -835,6 +854,7 @@ process_improvement/
         ├── 2170_battery_cells.csv
         ├── 18650_battery_cells.csv
         ├── automated_manufacturing_part_lengths.csv
+        ├── eight_machine_manufacturing_process.csv
         ├── milikans_electron_charge_observations.csv
         ├── monthly_united_states_trade_deficits_2024.csv
         ├── OP200_weekly_first_pass_yield.csv
@@ -842,13 +862,37 @@ process_improvement/
         ├── shewharts_resistance_measurements.csv
         ├── software_verification_death_to_birth_rates.csv
         └── software_verification_resistance_measurements.csv
+        └── wafer_assembly_part_placement.csv
 ```
 
 ## Contributing
 
-- Follow PEP8 / Black formatting
-- Add unit tests for new features
-- Run `pytest` before submitting pull requests
+Contributions to this project are welcome! To ensure the process is smooth, please follow these guidlines:
+
+### 1. Set up your development environment
+```bash
+# Clone the repository
+git clone https://github.com/jimlehner/process-improvement.git
+cd process-improvement
+
+# Install dependencies for development
+pip install -e .[dev]
+```
+
+### 2. Code style
+- Follow [PEP8](https://peps.python.org/pep-0008/) standards.
+- Use [Black](https://black.readthedocs.io/en/stable/) for automatic formatting.
+
+### 3. Testing
+- Add unit tests for new features or bug fixes.
+- Run `pytest` before submitting pull requests: pytest tests/ -- cov
+
+### 4. Pull requests
+- Create a descriptive branch (e.g., feature/add-xmr-chart).
+- Submit a PR with a clear description and refernce relevant issues.
+
+### 5. Reporting issues
+- Open issues for bugs or feature requests with steps to reproduce and examples.
 
 ## License
 
