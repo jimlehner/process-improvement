@@ -4,7 +4,7 @@
 ![Build Status](https://img.shields.io/github/actions/workflow/status/jimlehner/process-improvement/ci.yml)
 ![License](https://img.shields.io/pypi/l/process-improvement)
 
-A Python library for performing calculations and generating figures that facilitate an understanding of **variation**.
+A Python library for performing calculations and generating figures that facilitate an understanding of process **variation**.
 
 The primary tool of this library is the **XmR chart**. It also generates grids of X charts (called **network analysis**), capability histograms, Taguchi loss functions, limit charts, and grids of limit charts (called **limit chart network analysis**).
 
@@ -81,6 +81,7 @@ The `XmRChartConfig` class defines configuration settings for an XmR chart.
 | `figsize`           | tuple    | (15,5)  | Figure size `(width, height)`                     |
 | `dpi`               | int      | 350     | Resolution of the figure in dots per inch.        |
 | `show`              | bool     | False   | Whether to display the figure after creation.     |
+| `return_axes`       | str      |'both'   | Whether to display the figure after creation.     |
 | `tickinterval`      | int      | 2       | Interval between ticks on the x-axis.             |
 | `rotate_labels`     | int      | 0       | Rotation angle for x-axis tick labels in degrees. |
 | `xtick_fontsize`    | int      | 10      | Font size for x-axis tick labels.                 |
@@ -90,11 +91,8 @@ The `XmRChartConfig` class defines configuration settings for an XmR chart.
 | `limit_chart_ylabel`| str      | ''      | Label for y-axis on the first column of subplots. |
 | `linestyle`         | str      | '-'     | Line style for the main data line in subplots.    |
 | `mean_linestyle`    | str      | '-'     | Line style for the mean/central line in subplots. |
-| `target_line_color` | str      | 'green' | Color of the target line.                         |
-| `target_linestyle`  | str      | '--'    | Line style for the target line.                   |
 | `show_chart_title`  | bool     | False   | Whether to display subplot titles.                |
-| `show_label_values` | bool     | True    | Whether to display numeric values as annotations. |
-| `show_mean`         | bool     | True    | Whether to display the mean line on subplots.     |
+| `show_limit_values` | str      | "none"  | Whether to display values, labels, or nothing     |
 | `round_value`       | int      | 2       | Number of decimal places for rounding.            |
 
 
@@ -116,6 +114,7 @@ config = XmRChartConfig(
     figsize=(15,5),
     dpi=350,
     show=True,
+    return_axes='both',
     tickinterval=2,
     rotate_labels=0,
     xtick_fontsize=10,
@@ -249,7 +248,6 @@ The `CapabilityHistogramConfig` class defines configuration settings for a capab
 | `figsize`           | tuple    | (15,5)  | Figure size `(width, height)`                     |
 | `dpi`               | int      | 350     | Resolution of the figure in dots per inch.        |
 | `color`             | str      | 'blue'  | Color of histogram bars.                          |
-| `show_capabilities` | bool     | True    | Whether to display Cp, Cpk, Pp, and Ppk.          |
 | `round_value`       | int      | 2       | Decimal precision for calculated statistics.      |
 | `label_fontsize`    | int      | 14      | Font size for labels (mean, target, limits).      |
 | `show_label_values` | bool     | True    | Whether to display numeric for labels.            |
@@ -266,7 +264,7 @@ The `CapabilityHistogramConfig` class defines configuration settings for a capab
 | `title_padding`     | int      | 20      | Padding for the chart title.                      |
 | `align_ticks_bins`  | str      | 'None'  | Alignment of x-axis ticks.                        |
 | `rotate_tick_labels`| int      | 0       | Rotation angle for x-axis tick labels.            |
-
+| `show_capabilities` | bool     | True    | Whether to display Cp, Cpk, Pp, and Ppk.          |
 #### CapabilityHistogramConfig Usage Example
 
 ```python
@@ -432,7 +430,6 @@ The `TaguchiLossConfig` class defines configuration settings for a Taguchi loss 
 | `show_label_values` | bool     | True    | Whether to display numeric annotation values.     |
 | `safety_factor`     | float    | 1.3     | Multiplier for vertical spacing of labels.        |
 | `label_fontsize`    | int      | 14      | Font size for annotation labels.                  |
-| `show_target_label` | bool     | True    | Whether to display the target value annotation.   |
 | `show_mean_label`   | bool     | True    | Whether to display the mean value annotation.     |
 | `target_arrow_color`| str      | 'black' | Color of the arrow pointing to the target value.  |
 | `show_indices`      | bool     | False   | Whether to display the process capability indices.|
@@ -495,7 +492,7 @@ result = taguchi_loss_function(
 
 ### LimitChartConfig
 
-The `LimitChartConfig` class defines configuration settings for a limit chart and a grid of limit charts called a `limit_chart_network_analysis`.
+The `LimitChartConfig` class defines configuration settings for a limit chart.
 
 | Parameter           | Type     | Default | Description                                       |
 |---------------------|----------|---------|---------------------------------------------------|
@@ -572,13 +569,39 @@ result = limit_chart(
 )
 ```
 
-#### LimitChartConfig Usage Example with limit_chart_network_analysis
+### LimitChartNetworkAnalysisConfig
+
+The `LimitChartNetworkAnalysisConfig` class defines configuration settings for a grid of limit charts.
+
+| Parameter           | Type     | Default | Description                                       |
+|---------------------|----------|---------|---------------------------------------------------|
+| `figsize`           | tuple    | (15,5)  | Figure size `(width, height)`                     |
+| `dpi`               | int      | 350     | Resolution of the figure in dots per inch.        |
+| show                | bool     | True    | Display the figure immediately after creation.    |
+| hspace              | float    | 0.2     | Veritcal space between subplots.                  |
+| sharey              | bool     | True    | Share the y-axis across subplots.                 |
+| tickinterval        | int      | 2       | Interval between ticks on the x-axis.             |
+| rotate_labels       | int      | 0       | Rotation angle for x-axis tick labels.            |
+| xtick_fontsize      | int      | 10      | Font size for x-axis tick labels.                 |
+| show_xticks         | bool     | False   | Display x-axis ticks on subplots.                 |
+| show_yticks         | bool     | True    | Display y-axis ticks on subplots.                 |
+| ylabel_fontsize     | int      | 10      | Font size for axis labels.                        |
+| limit_chart_ylabel  | str      | ''      | Label for the y-axis on the first column.         |
+| linestyle           | str      | '-'     | Line style for the main data line.                |
+| mean_linestyle      | str      | '-'     | Line style for the mean/central line.             |
+| target_line_color   | str      | 'tab:green' | Color of the target line.                     |
+| target_linestyle    | str      | '--'    | Line style for the target line.                   |
+| show_chart_title    | bool     | False   | Display subplot titles.                           |
+| show_mean           | bool     | True    | Display the mean line on subplots.                |
+| round_value         | int      | 2       | Decimal places for rounding calculated values.    |
+
+#### LimitChartNetworkAnalysisConfig Usage Example
 
 ```python
 
 import pandas as pd
 from process_improvement.charts.limit_charts import limit_chart_network_analysis
-from process_improvement.charts.utils import LimitChartConfig
+from process_improvement.charts.utils import LimitChartNetworkAnalysisConfig
 
 # Example dataframes
 df1 = pd.DataFrame({
@@ -608,15 +631,16 @@ config = LimitChartConfig(
     figsize=(8, 8),
     dpi=350,
     show=False,
+    hspace=0.2,
     chart_title='Limit Chart',
     show_chart_title=False,
 
     tickinterval=2,
     rotate_labels=0,
     xtick_fontsize=10,
-    show_xticks=True,
+    show_xticks=False,
     show_ytick_labels=True,
-    label_fontsize=10,
+    ylabel_fontsize=12,
     limit_chart_ylabel='',
 
     linestyle='-',
@@ -625,7 +649,6 @@ config = LimitChartConfig(
     target_line_color='tab:green',
     target_linestyle='--',
 
-    show_label_values=True,
     show_mean=True,
     round_value=2
 )
@@ -714,30 +737,11 @@ The `xmr_comparison` function generates a grid of XmR charts that contain proces
 The library project structure is as follows:
 
 ```
-process_improvement/
-├── charts/
-│   ├── capability_histogram.py
-│   ├── combo_chart.py
-│   ├── limit_charts.py
-│   ├── results.py
-│   ├── taguchi_loss.py
-│   ├── utils.py
-│   └── xmr_charts.py
-├── calculations/
-│   ├── capability_calculations.py
-│   ├── loss_function_calculations.py
-│   └── xmr_calculations.py
-├── data/
-│   ├── 2170_battery_cells.csv
-│   ├── 18650_battery_cells.csv
-│   ├── automated_manufacturing_part_lengths.csv
-│   ├── milikans_electron_charge_observations.csv
-│   ├── monthly_united_states_trade_deficits_2024.csv
-│   ├── OP200_weekly_first_pass_yield.csv
-│   ├── quarterly_sales_by_region.csv
-│   ├── shewharts_resistance_measurements.csv
-│   ├── software_verification_death_to_birth_rates.csv
-│   └── software_verification_resistance_measurements.csv
+process_improvement/          <- Outer folder / project root
+├── pyproject.toml
+├── README.md
+├── LICENSE
+├── MANIFEST.in
 ├── tests/
 │   ├── test_figures/
 │   ├── test_capability_histogram.py
@@ -746,18 +750,33 @@ process_improvement/
 │   └── test_xmr_comparison.py
 ├── docs/
 │   ├── figures/
-│   │   ├── capability_histogram_example.png
-│   │   ├── combo_chart_example.png
-│   │   ├── limit_chart_example.png
-│   │   ├── limit_chart_network_analysis_example.png
-│   │   ├── network_analysis_example.png
-│   │   ├── taguchi_loss_example.png
-│   │   ├── xmr_chart_example.png
-│   │   └── xmr_comparison_example.png
-|   └── notebooks/
-│        ├── xmr_chart_demo.ipynb
-│        └── capability_histogram_demo.ipynb
-└── README.md
+│   └── notebooks/
+└── process_improvement/      <- Inner folder / Python package
+    ├── __init__.py
+    ├── data_loader.py
+    ├── charts/
+    │   ├── capability_histogram.py
+    │   ├── combo_chart.py
+    │   ├── limit_charts.py
+    │   ├── results.py
+    │   ├── taguchi_loss.py
+    │   ├── utils.py
+    │   └── xmr_charts.py
+    ├── calculations/
+    │   ├── capability_calculations.py
+    │   ├── loss_function_calculations.py
+    │   └── xmr_calculations.py
+    └── data/
+        ├── 2170_battery_cells.csv
+        ├── 18650_battery_cells.csv
+        ├── automated_manufacturing_part_lengths.csv
+        ├── milikans_electron_charge_observations.csv
+        ├── monthly_united_states_trade_deficits_2024.csv
+        ├── OP200_weekly_first_pass_yield.csv
+        ├── quarterly_sales_by_region.csv
+        ├── shewharts_resistance_measurements.csv
+        ├── software_verification_death_to_birth_rates.csv
+        └── software_verification_resistance_measurements.csv
 ```
 
 ## Contributing
