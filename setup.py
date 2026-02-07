@@ -8,14 +8,14 @@ with open('README.md', 'r', encoding='utf-8') as f:
 
 setup(
     name='process_improvement',
-    version='1.1.3',
+    version='1.1.5',
     packages=find_packages(),
-    description='A Python package for identifying, understanding, and eliminating sources of variation from business and manufacturing processes.',
+    description='A Python library for performing calculations and generating figures that facilitate an understanding of process variation.',
     long_description=long_description,
     long_description_content_type='text/markdown',
     author='Jim Lehner',
     author_email='James.Lehner@gmail.com',
-    url='https://github.com/jimlehner/datadrivenimprovement',
+    url='https://github.com/jimlehner/process-improvement',
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
