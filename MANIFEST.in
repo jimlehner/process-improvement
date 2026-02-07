@@ -2,11 +2,11 @@
 include README.md
 include LICENSE
 
-# Include all images in docs
-recursive-include docs/figures *.png
+# Include all images inside the package
+recursive-include process_improvement/docs/figures *.png
 
-# Include Jupyter notebooks in docs
-recursive-include docs/notebooks *.ipynb
+# Include Jupyter notebooks in docs (if inside package)
+recursive-include process_improvement/docs/notebooks *.ipynb
 
 # Include CSV datasets inside the package
 recursive-include process_improvement/data *.csv
