@@ -1,8 +1,8 @@
 # process_improvement
 
-[![PyPI version](https://img.shields.io/pypi/v/process-improvement)](https://pypi.org/project/process-improvement/)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/jimlehner/process-improvement/ci.yml)](https://github.com/jimlehner/process-improvement/actions)
-[![License](https://img.shields.io/pypi/l/process-improvement)](https://pypi.org/project/process-improvement/)
+[![PyPI Version](https://img.shields.io/pypi/v/process-improvement)](https://pypi.org/project/process-improvement/)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/jimlehner/process-improvement/python-package.yml?branch=main)](https://github.com/jimlehner/process-improvement/actions)
+[![License](https://img.shields.io/pypi/l/process-improvement)](https://github.com/jimlehner/process-improvement/blob/main/LICENSE)
 
 A Python library for performing calculations and generating figures that facilitate an understanding of process **variation**.
 
