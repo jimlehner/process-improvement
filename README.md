@@ -19,13 +19,6 @@ To learn more about how to reduce costs and improve quality by understanding var
 ## Table of Contents
 - [Installation](#installation)
 - [Features](#features)
-- [Configuration and usage](#configuration-and-usage)
-    - [XmRChartConfig](#xmrchartconfig)
-    - [NetworkAnalysisConfig](#networkanalysisconfig)
-    - [CapabilityHistogramConfig](#capabilityhistogramconfig)
-    - [ComboChartConfig](#combochartconfig)
-    - [TaguchiLossConfig](#taguchilossconfig)
-    - [LimitChartConfig](#limitchartconfig)
 - [Function Descriptions and Example Figures](#function-descriptions-and-example-figures)
     - [Capability Histogram](#capability-histogram)
     - [Combo Chart](#combo-chart)
@@ -35,6 +28,14 @@ To learn more about how to reduce costs and improve quality by understanding var
     - [Taguchi Loss Function](#taguchi-loss-function)
     - [XmR Chart](#xmr-chart)
     - [XmR Chart Comparison](#xmr-chart-comparison)
+- [Configuration and usage](#configuration-and-usage)
+    - [XmRChartConfig](#xmrchartconfig)
+    - [NetworkAnalysisConfig](#networkanalysisconfig)
+    - [CapabilityHistogramConfig](#capabilityhistogramconfig)
+    - [ComboChartConfig](#combochartconfig)
+    - [TaguchiLossConfig](#taguchilossconfig)
+    - [LimitChartConfig](#limitchartconfig)
+    - [LimitChartNetworkAnalysisConfig](#limitchartnetworkanalysisconfig)
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
 - [License](#license)
@@ -65,6 +66,70 @@ pip install -e .
 - Support for custom chart configuration (size, dpi, colors) 
 - Generates publication-quality charts using Matplotlib/Seaborn
 - Modular architecture for extending charts, configurations, and workflows
+
+## Function Descriptions and Example Figures
+
+Example figures and descriptions for each one of the charts in this library.
+
+### Capability Histogram
+
+The `capability_histogram` function plots a histogram of process data in the context of the Upper Specification Limit (USL), Lower Specification Limit (LSL), target, and mean. This allows users to understand process behavior in the context of the **voice of the customer**. 
+
+The function also calculates the process capability indices: the capability ratio (Cp), the centered capability ratio (Cpk), the performance ratio (Pp), and the centered performance ratio (Ppk). To learn more about these indices visit [BrokenQuality.com/process-capability-indices](https://www.brokenquality.com/process-capability-indices).
+
+![Capability Histogram Example](docs/figures/capability_histogram_example.png)
+
+### Combo Chart
+
+The `combo_chart` function displays the X chart portion of an XmR chart with a horizontally oriented histogram. The shared y-axis between the subplots allows for direct visual comparison between the voice of the process, defined by the Upper Process Limit (UPL) and the Lower Process Limit (LPL), compares with the voice of the customer, defined by the Upper Specification Limit (USL) and the Lower Specification Limit (LSL).  
+
+![Combo Chart Example](docs/figures/combo_chart_example.png)
+
+### Limit Chart
+
+The `limit_chart` function plots a time series or running record of process data with the additional context of the Upper Specification Limit (USL), Lower Specification Limit (LSL), target, and process mean. This allows users to contextualize how a process has changed over time with respect to the voice of the customer (i.e., the specification limits). Values that fall outside of the specification limits are colored red.
+
+![Limit Chart Example](docs/figures/limit_chart_example.png)
+
+### Limit Chart Network Analysis
+
+The `limit_chart_network_analysis` function plots a grid of time series or running records that contain process data from multiple system elements performing the same task. Like the `limit_chart` function, each subplot in the grid displays the Upper Specification Limit (USL), Lower Specification Limit (LSL), target, and mean in each subplot. This allows users to compare how different elements performing the same task are operating with respect to each other and with respect to the voice of the customer (i.e., the specification limits).
+
+![Limit Chart Network Analysis Example](docs/figures/limit_chart_network_analysis_example.png)
+
+### Network Analysis
+
+The `network_analysis` function plots a grid of X charts containing process data from multiple elements performing the same task and using the same performance or quality metric. Like the `xmr_chart` function, each subplot in the grid displays the associated Upper Process Limit (UPL), Lower Process Limit (LPL), and process mean. This allows users to compare how different elements performing the same task are operating with respect to each other and with respect to the voice of the process (i.e., the process limits).
+
+![Network Analysis Example](docs/figures/network_analysis_example.png)
+
+### Taguchi Loss Function
+
+The `taguchi_loss_function` function plots the quadratic loss function called the Taguchi loss function with respect to the specified Upper Specification Limit (USL), Lower Specification Limit (LSL), target and process mean. The vertex of the parabola sits at the target value. The further the mean deviates from the target, the larger the loss due to poor quality. 
+
+Loss increases quadratically until the function reaches the specification limits. Here, the maximum loss due to poor quality is incurred. In instances where rework can be performed, a portion of the loss can be recovered.
+
+The `taguchi_loss_function` function allows users to optionally display process data as a histogram. 
+
+![Taguchi Loss Function Example](docs/figures/taguchi_loss_example.png)
+
+### XmR Chart
+
+The `xmr_chart` function generates an XmR chart of process data. The XmR chart is composed of two figures: the X chart and the mR chart. 
+
+The X chart plots logically comparable individual values along with the Upper Process Limit (UPL), Lower Process Limit (LPL), and process mean. The mR chart plots the moving ranges associated with the logically comparable individual values along with the Upper Range Limit (URL) and the average moving range.
+
+When all of the values fall inside the process limits, the underlying causal system is characterized as **predictable**. The future behavior of a predictable process can be anticipated within limits because only common causes of routine variation influence process behavior. To improve a predictable process, new technology, equipment, materials, methods, or procedures must be introduced.
+
+When one or more values fall outside the process limits, the underlying causal system is characterized as **unpredictable**. The future behavior of an unpredictable process **cannot** be predicted within limits because both common causes of routine variation and assignable causes of exceptional variation influence process behavior. To improve a predictable process, the assignable causes must be understood and eliminated.
+
+![XmR Chart Example](docs/figures/xmr_chart_example.png)
+
+### XmR Chart Comparison
+
+The `xmr_comparison` function generates a grid of XmR charts that contain process data from different process steps or stages. This function helps users evaluate how a process has changed over time.
+
+![XmR Comparison Example](docs/figures/xmr_comparison_example.png)
 
 ## Configuration and Usage
 
@@ -737,7 +802,7 @@ The `xmr_comparison` function generates a grid of XmR charts that contain proces
 The library project structure is as follows:
 
 ```
-process_improvement/          <- Outer folder / project root
+process_improvement/         
 ├── pyproject.toml
 ├── README.md
 ├── LICENSE
