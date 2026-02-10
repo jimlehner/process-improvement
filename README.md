@@ -136,7 +136,7 @@ Loss increases quadratically until the function reaches the specification limits
 
 The `taguchi_loss_function` function allows users to optionally display process data as a histogram. 
 
-![Taguchi Loss Function Example](docs/figures/taguchi_loss_example.png)
+![Taguchi Loss Function Example](docs/figures/taguchi_loss_function_example.png)
 
 ### XmR Chart
 
