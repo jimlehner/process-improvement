@@ -28,7 +28,7 @@ The `XmRChartConfig` class defines configuration settings for an XmR chart.
 
 ✅ Axes & Ticks
 | Parameter           | Type   | Default | Description                                     |
-|-------------=-------|--------|---------|-------------------------------------------------|
+|---------------------|--------|---------|-------------------------------------------------|
 | `tickinterval`      | int    | 1       | Interval between ticks on the x-axis            |
 | `rotate_labels`     | int    | 0       | Rotation angle for x-axis tick labels in degrees|
 | `xtick_fontsize`    | int    | 10      | Font size for x-axis tick labels                |
