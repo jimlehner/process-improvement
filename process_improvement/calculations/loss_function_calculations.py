@@ -12,7 +12,7 @@ def taguchi_loss_calcs(
         USL: float,
         LSL: float,
         Target: Optional[float] = None
-        ) -> dict[str, float or list]:
+        ) -> TaguchiLossCalcResults:
     """
     Compute quadratic loss function (Taguchi loss function) values over a
     specification range.
@@ -117,9 +117,9 @@ def expected_loss_calc(
         USL: float,
         LSL: float,
         Target: Optional[float] = None,
-        cost_of_scrap: Optional[float] = 1,
+        cost_of_scrap: float = 1,
         # round_value: Optional[float] = 1
-        ) -> dict[str, float or list]:
+        ) -> ExpectedLossCalcResults:
     """
     Docstring for expected_loss
 
