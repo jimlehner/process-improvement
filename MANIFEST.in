@@ -5,6 +5,9 @@ include LICENSE
 # Include all images inside the package
 recursive-include process_improvement/docs/figures *.png
 
+# Exclude figures in tests/test_figures
+exclude tests/test_figures/*
+
 # Include Jupyter notebooks in docs (if inside package)
 recursive-include process_improvement/docs/notebooks *.ipynb
 
