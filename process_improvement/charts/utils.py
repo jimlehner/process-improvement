@@ -1,88 +1,96 @@
 from dataclasses import dataclass, field
 import numpy as np
 import matplotlib.pyplot as plt
-from typing import Optional, List
+from typing import Optional, List, Tuple
 
 @dataclass
 class XmRChartConfig:
     """
-    Configuration settings for a network of Limit Charts (multiple subplots).
+      Configuration settings for an XmR chart.
 
-    This class defines parameters controlling figure layout, axes, lines,
-    markers, and annotations for a Limit Chart network analysis visualization.
+      This class defines parameters controlling figure layout, axes, lines,
+      markers, titles, annotations, and numeric rounding for an XmR chart.
 
-    Parameters
-    ----------
-    figsize : tuple[float, float], default=(15, 5)
-        Width and height of the figure in inches.
+      Parameters
+      ----------
+      🎨 Figure & Layout
+      ─────────────────────────────
+      figsize : tuple[float, float], default=(15, 5)
+            Width and height of the figure in inches.
 
-    dpi : int, default=350
-        Resolution of the figure in dots per inch.
+      dpi : int, default=350
+            Resolution of the figure in dots per inch.
 
-    show : bool, default=False
-        Whether to display the figure immediately after creation.
+      show : bool, default=False
+            Whether to display the figure immediately after creation.
 
-    return_axes: str = "both"
-        Determines which axes are returned by the chart function.
-        Options:
-              - "both": return both the X chart and mR chart axes (default)
-              - "x": return only the X chart axes
-             - "mr": return only the mR chart axes
-        This allows the user to work with or display only a subset of the figure’s axes
-        without modifying the underlying figure.
+      return_axes : str, default='both'
+            Determines which axes are returned by the chart function.
+            Options:
+                  - "both": return both the X chart and mR chart axes (default)
+                  - "x": return only the X chart axes
+                  - "mr": return only the mR chart axes
 
-    tickinterval : int, default=2
-        Interval between ticks on the x-axis.
+      ✅ Axes & Ticks
+      ─────────────────────────────
+      tickinterval : int, default=2
+            Interval between ticks on the x-axis.
 
-    rotate_labels : int, default=0
-        Rotation angle for x-axis tick labels in degrees.
+      rotate_labels : int, default=0
+            Rotation angle for x-axis tick labels in degrees.
 
-    xtick_fontsize : int, default=10
-        Font size for x-axis tick labels.
+      xtick_fontsize : int, default=10
+            Font size for x-axis tick labels.
 
-    show_xticks : bool, default=True
-        Whether to display x-axis ticks on subplots.
+      show_xticks : bool, default=True
+            Whether to display x-axis ticks on subplots.
 
-    show_yticks : bool, default=True
-        Whether to display y-axis ticks on subplots.
+      show_yticks : bool, default=True
+            Whether to display y-axis ticks on subplots.
 
-    label_fontsize : int, default=10
-        Font size for axis labels.
+      label_fontsize : int, default=10
+            Font size for axis labels.
 
-    limit_chart_ylabel : str, default=''
-        Label for the y-axis on the first column of subplots.
+      limit_chart_ylabel : str, default=''
+            Label for the y-axis on the first column of subplots.
 
-    linestyle : str, default='-'
-        Line style for the main data line in subplots.
+      📊 Lines & Styling
+      ─────────────────────────────
+      linestyle : str, default='-'
+            Line style for the main data line in subplots.
 
-    mean_linestyle : str, default='-'
-        Line style for the mean/central line in subplots.
+      mean_linestyle : str, default='-'
+            Line style for the mean/central line in subplots.
 
-    target_line_color : str, default='tab:green'
-        Color of the target line.
+      target_line_color : str, default='tab:green'
+            Color of the target line.
 
-    target_linestyle : str, default='--'
-        Line style for the target line.
+      target_linestyle : str, default='--'
+            Line style for the target line.
 
-    show_chart_title : bool, default=False
-        Whether to display subplot titles.
+      📝 Titles & Annotations
+      ─────────────────────────────
+      show_chart_title : bool, default=False
+            Whether to display subplot titles.
 
-    show_limit_values : str, default="none"
-        Whether to display numeric values, labels, or nothing 
-        as annotations on the charts.
+      show_limit_values : str, default="none"
+            Whether to display numeric values, labels, or nothing as annotations on the charts.
 
-    round_value : int, default=2
-        Number of decimal places for rounding calculated values.
-    """
-    # --- Figure/Layout ---
+      📈 Statistics/Values
+      ─────────────────────────────
+      round_value : int, default=2
+            Number of decimal places for rounding calculated values.
+      """
+    
+    # --- Figure & Layout ---
     figsize: tuple[float, float] = (15, 6)
     dpi: int = 350
-
+    
     # --- Behavior / Output Options ---
     show: bool = False
-    return_axes: str = 'both' 
-
-    # --- Axis & Ticks ---
+    return_axes: str = 'both'  # Options: "both", "x", "mr"
+    
+    # --- Axes & Ticks ---
     tickinterval: int = 1
     show_xticks: bool = True
     show_yticks: bool = True
@@ -92,177 +100,312 @@ class XmRChartConfig:
     mr_xlabel: str = ''
     xchart_ylabel: str = 'Individual Value (X)'
     mrchart_ylabel: str = 'Moving Range (mR)'
-
-    # --- Lines & Markers ---
-    linestyle: bool = True
-    ave_linestyle: str = '-'
-
+    
+    # --- Lines & Styling ---
+    linestyle: str = '-'            # Main data line style
+    mean_linestyle: str = '-'        # Average / central line style
+    
     # --- Annotations & Titles ---
     show_chart_titles: bool = False
     xchart_title: str = 'X chart'
     mrchart_title: str = 'mR chart'
     xchart_title_fontsize: int = 12
-
-    # --- Statistics/Values ---
+    
+    # --- Statistics / Values ---
     round_value: int = 2
-    show_limit_values: str = "none"
+    show_limit_values: str = "none"  # Options: "none", "labels", "values"
     restrict_UPL: bool = False
     restrict_LPL: bool = True
-
+    
 @dataclass
-class NetworkAnalysisConfig:
-    '''
-    Configuration settings for network analysis charts.
+class XmRCompConfig:
+    """
+    Configuration settings for an XmR chart comparison plot.
 
-    This class defines parameters controlling figure layout, axis behavior,
-    line styles, titles, and statistical value display for network analysis
-    visualizations.
+    This configuration strictly reflects the parameters
+    actually used inside `xmr_comparison()`.
 
-    Parameters
-    ----------
-    figsize : tuple[float, float], default=(15, ?)
+    🎨 Figure & Layout
+    ─────────────────────────────
+    figsize : tuple[float, float], default=(15, 5)
         Width and height of the figure in inches.
 
     dpi : int, default=350
         Resolution of the figure in dots per inch.
 
-    show : bool, default=False
-        Whether to display the figure after creation.
+    return_axes : str, default='both'
+        Determines which axes are returned.
+        Options:
+            - "both" (default)
+            - "x"
+            - "mr"
 
-    wspace : float, default=0.0
-        Width space between subplots.
-
+    ✅ Axes & Ticks
+    ─────────────────────────────
     tickinterval : int, default=1
         Interval between ticks on the x-axis.
 
-    show_x_ticks : bool, default=True
-        Whether to display x-axis ticks on subplots.
-
-    show_y_ticks : bool, default=True
-        Whether to display y-axis ticks on subplots.
+    rotate_labels : int, default=0
+        Rotation angle for x-axis tick labels.
 
     xtick_fontsize : int, default=10
         Font size for x-axis tick labels.
 
+    show_xticks : bool, default=True
+        Whether to display x-axis ticks.
+
+    show_yticks : bool, default=True
+        Whether to display y-axis tick labels.
+
     label_fontsize : int, default=10
         Font size for axis labels.
 
-    rotate_labels : int, default=0
-        Rotation angle for x-axis tick labels in degrees.
+    xchart_ylabel : str, default='Individual Value (X)'
+        Label for X chart y-axis.
 
-    subplot_ylabel : str, default='Individual Value (X)'
-        Label for the y-axis on individual subplots.
+    mrchart_ylabel : str, default='Moving Range (mR)'
+        Label for mR chart y-axis.
 
+    xchart_title_fontsize : int, default=12
+        Font size for subplot titles.
+
+    📊 Lines & Styling
+    ─────────────────────────────
     linestyle : bool, default=True
-        Whether to draw the main data line in subplots.
+        Whether to draw connecting lines between data points.
 
-    ave_linestyle : str, default='-'
-        Line style for the average/central line.
-
-    show_chart_titles : bool, default=False
-        Whether to display chart titles above subplots.
-
-    chart_title : str, default='Network Analysis'
-        Title for the overall chart.
-
-    chart_title_fontsize : int, default=14
-        Font size for the overall chart title.
-
-    subplot_title_fontsize : int, default=12
-        Font size for individual subplot titles.
-
-    round_value : int, default=2
-        Number of decimal places for rounding displayed values.
-
-    show_limit_values : bool, default=True
-        Whether to display limit values on the chart.
+    mean_linestyle : str, default='-'
+        Line style for mean / central line.
 
     restrict_UPL : bool, default=False
-        Whether to restrict plotting above the Upper Plot Limit (UPL).
+        Restrict upper process limit calculation.
 
-    restrict_LPL : bool, default=True
-        Whether to restrict plotting below the Lower Plot Limit (LPL).
-    '''
-      # --- Figure/Layout ---
+    restrict_LPL : bool, default=False
+        Restrict lower process limit calculation.
+
+    📝 Limit Annotations
+    ─────────────────────────────
+    show_limit_values : str, default="none"
+        Whether to display limit annotations.
+        Options:
+            - "none"
+            - "labels"
+            - "values"
+
+    📈 Statistics / Values
+    ─────────────────────────────
+    round_value : int, default=2
+        Number of decimal places used for rounding.
+    """
+
+    # --- Figure & Layout ---
+    figsize: Tuple[float, float] = (15, 5)
+    dpi: int = 350
+    return_axes: str = "both"
+
+    # --- Axes & Ticks ---
+    tickinterval: int = 1
+    rotate_labels: int = 0
+    xtick_fontsize: int = 10
+    show_xticks: bool = True
+    show_yticks: bool = True
+    label_fontsize: int = 10
+    xchart_ylabel: str = "Individual Value (X)"
+    mrchart_ylabel: str = "Moving Range (mR)"
+    xchart_title_fontsize: int = 12
+
+    # --- Lines & Styling ---
+    linestyle: bool = True
+    mean_linestyle: str = "-"
+    restrict_UPL: bool = False
+    restrict_LPL: bool = False
+
+    # --- Limit Annotations ---
+    show_limit_values: str = "none"  # "none", "labels", "values"
+
+    # --- Statistics / Values ---
+    round_value: int = 2
+
+
+@dataclass
+class NetworkAnalysisConfig:
+    """
+      Configuration settings for network analysis charts.
+
+      This class defines parameters controlling figure layout, axis behavior,
+      line styles, titles, and statistical value display for network analysis
+      visualizations.
+
+      Parameters
+      ----------
+      🎨 Figure & Layout
+      ─────────────────────────────
+      figsize : tuple[float, float], default=(15,6)
+            Width and height of the figure in inches.
+
+      dpi : int, default=350
+            Resolution of the figure in dots per inch.
+
+      show : bool, default=False
+            Whether to display the figure after creation.
+
+      wspace : float, default=0.0
+            Width space between subplots.
+
+      chart_title : str, default='Network Analysis'
+            Title for the overall chart.
+
+      chart_title_fontsize : int, default=14
+            Font size for the overall chart title.
+
+      ✅ Axes & Ticks
+      ─────────────────────────────
+      tickinterval : int, default=1
+            Interval between ticks on the x-axis.
+
+      rotate_labels : int, default=0
+            Rotation angle for x-axis tick labels in degrees.
+
+      xtick_fontsize : int, default=10
+            Font size for x-axis tick labels.
+
+      show_x_ticks : bool, default=True
+            Whether to display x-axis ticks on subplots.
+
+      show_y_ticks : bool, default=True
+            Whether to display y-axis ticks on subplots.
+
+      label_fontsize : int, default=10
+            Font size for axis labels.
+
+      subplot_ylabel : str, default='Individual Value (X)'
+            Label for the y-axis on individual subplots.
+
+      subplot_title_fontsize : int, default=12
+            Font size for individual subplot titles.
+
+      📊 Lines & Styling
+      ─────────────────────────────
+      linestyle : bool, default=True
+            Whether to draw the main data line in subplots.
+
+      ave_linestyle : str, default='-'
+            Line style for the average/central line.
+
+      📝 Titles & Annotations
+      ─────────────────────────────
+      show_chart_titles : bool, default=False
+            Whether to display chart titles above subplots.
+
+      show_limit_values : bool, default=True
+            Whether to display limit values on the chart.
+
+      📈 Statistics/Values
+      ─────────────────────────────
+      round_value : int, default=2
+            Number of decimal places for rounding displayed values.
+
+      restrict_UPL : bool, default=False
+            Whether to restrict plotting above the Upper Plot Limit (UPL).
+
+      restrict_LPL : bool, default=True
+            Whether to restrict plotting below the Lower Plot Limit (LPL).
+      """
+    # --- Figure & Layout ---
     figsize: tuple[float, float] = (15, 6)
     dpi: int = 350
     show: bool = False
     wspace: float = 0.0
-
-    # --- Axis & Ticks ---
-    tickinterval: int = 1
-    show_x_ticks: bool = True
-    show_y_ticks: bool = True
-    xtick_fontsize: int = 10
-    label_fontsize: int = 10
-    rotate_labels: int = 0
-    subplot_ylabel: str = 'Individual Value (X)'
-
-    # --- Lines & Markers ---
-    linestyle: bool = True
-    ave_linestyle: str = '-'
-
-    # --- Annotations & Titles ---
-    show_chart_titles: bool = False
     chart_title: str = 'Network Analysis'
     chart_title_fontsize: int = 14
+    
+    # --- Axes & Ticks ---
+    tickinterval: int = 1
+    rotate_labels: int = 0
+    xtick_fontsize: int = 10
+    show_x_ticks: bool = True
+    show_y_ticks: bool = True
+    label_fontsize: int = 10
+    subplot_ylabel: str = 'Individual Value (X)'
     subplot_title_fontsize: int = 12
-
+    
+    # --- Lines & Styling ---
+    linestyle: bool = True
+    mean_linestyle: str = '-'
+    
+    # --- Titles & Annotations ---
+    show_chart_titles: bool = False
+    show_limit_values: bool = True
+    
     # --- Statistics/Values ---
     round_value: int = 2
-    show_limit_values: bool = True
     restrict_UPL: bool = False
     restrict_LPL: bool = True
+    
 
 @dataclass
 class CapabilityHistogramConfig:
       """
       Configuration settings for a capability histogram chart.
 
-      This class defines parameters controlling figure size, colors, labels, 
-      arrows, legends, annotations, and other chart behavior for capability histograms.
+      Parameters are organized by functional group to improve clarity and
+      mirror the documentation structure.
 
       Parameters
       ----------
+      🎨 Figure & Layout
+      ────────────────────────────────────────
       figsize : tuple[float, float], default=(15, 5)
             Width and height of the figure in inches.
 
       dpi : int, default=350
             Resolution of the figure in dots per inch.
 
-      rotate_xtick_labels : int, default=0
-            Rotation angle (degrees) for x-axis tick labels.
-
-      align_x_ticks_with_bins : str, default='None'
-            Alignment of x-axis ticks relative to histogram bins. Options:
-            "None", "Centers", "Edges".
-
-      color : str, default='tab:blue'
-            Color of histogram bars.
-
-      marker_area_pts2 : int, default=150
-            Area of the scatter plot marker in points squared.
-
       safety_factor : float, default=1.35
             Multiplier to add extra space for annotations to avoid overlap.
 
-      target_arrow_color : str, default='black'
-            Arrow color for the target indicator.
+      rotate_xtick_labels : int, default=0
+            Rotation angle (degrees) for x-axis tick labels.
 
-      mean_arrow_color : str, default='gray'
-            Arrow color for the mean indicator.
+      align_xticks_with_bins : str, default='None'
+            Alignment of xticks to histogram bins.
+            Options: "None", "Centers", "Edges".
 
-      label_fontsize : int, default=14
-            Font size for annotation labels (mean, target, limits, etc.).
+      📊 Histogram Styling
+      ────────────────────────────────────────
+      color : str, default='tab:blue'
+            Color of histogram bars.
 
-      show_label_values : bool, default=True
-            Whether to display numeric values for annotations.
+      mean_marker_size : int, default=150
+            Size (area) of the scatter plot marker in points squared.
 
+      🏷 Statistical Labels & Markers
+      ────────────────────────────────────────
       show_mean_label : bool, default=True
             Whether to show the mean marker and label.
 
       show_target_label : bool, default=True
             Whether to show the target marker and label.
+
+      show_label_values : bool, default=True
+            Whether to display numeric values in annotation labels.
+
+      label_fontsize : int, default=14
+            Font size for annotation labels (mean, target, limits, etc.).
+
+      round_value : int, default=2
+            Decimal precision for calculated statistics.
+
+      mean_arrow_color : str, default='gray'
+            Arrow color for the mean indicator.
+
+      target_arrow_color : str, default='black'
+            Arrow color for the target indicator.
+
+      📈 Capability Metrics & Legend
+      ────────────────────────────────────────
+      show_capabilities : bool, default=True
+            Whether to display capability indices (Cp, Cpk, Pp, Ppk).
 
       legend_loc : str, default='best'
             Location of the legend on the chart.
@@ -270,79 +413,77 @@ class CapabilityHistogramConfig:
       legend_round_value : int, default=2
             Decimal places for numeric values in the legend.
 
+      📝 Title
+      ────────────────────────────────────────
       show_title : bool, default=True
             Whether to display the chart title.
 
       title_fontsize : int, default=16
-            Font size for the chart title.
+            Font size of the chart title.
 
       title_padding : int, default=20
-            Padding for the chart title.
+            Padding above the chart title.
 
       figure_title : str, default=""
             Custom title for the figure.
-
-      round_value : int, default=2
-            Decimal precision for calculated statistics.
-
-      show_capabilities : bool, default=True
-            Whether to display capability indices (Cp, Cpk, Pp, Ppk) in the legend.
       """
-      # --- Figure/Layout ---
+      # 🎨 Figure & Layout
       figsize: tuple[float, float] = (15, 5)
       dpi: int = 350
-
-      # --- Axis & Ticks ---
-      rotate_xtick_labels: int = 0
-      align_x_ticks_with_bins: str = "None"  # Options: "None", "Centers", "Edges"
-
-      # --- Lines & Markers ---
-      color: str = 'tab:blue'
-      marker_area_pts2: int = 150
       safety_factor: float = 1.35
-      target_arrow_color: str = 'black'
-      mean_arrow_color: str = 'gray'
 
-      # --- Annotations & Labels ---
-      label_fontsize: int = 14
-      show_label_values: bool = True
+      rotate_xtick_labels: int = 0
+      align_xticks_with_bins: str = "None"  # Options: "None", "Centers", "Edges"
+
+      # 📊 Histogram Styling
+      color: str = 'tab:blue'
+      mean_marker_size: int = 150  # Area in points squared
+
+      # 🏷 Statistical Labels & Markers
       show_mean_label: bool = True
       show_target_label: bool = True
+      show_label_values: bool = True
+
+      label_fontsize: int = 14
+      round_value: int = 2
+
+      mean_arrow_color: str = 'gray'
+      target_arrow_color: str = 'black'
+
+      # 📈 Capability Metrics & Legend
+      show_capabilities: bool = True
       legend_loc: str = 'best'
       legend_round_value: int = 2
+
+      # 📝 Title
       show_title: bool = True
       title_fontsize: int = 16
       title_padding: int = 20
       figure_title: str = ""
-
-      # --- Statistics/Values ---
-      round_value: int = 2
-      show_capabilities: bool = True
 
 @dataclass
 class ComboChartConfig:
       """
       Configuration settings for a combo chart, typically including an X chart and a histogram.
 
-      This class defines parameters controlling figure layout, subplots, markers, arrows,
-      legends, and other display options for combo chart visualizations.
+      Parameters are organized by functional group to improve clarity and mirror
+      the table structure.
 
       Parameters
       ----------
+      🎨 Figure & Layout
+      ────────────────────────────────────────
       figsize : tuple[float, float], default=(15, 6)
             Width and height of the overall figure.
 
       dpi : int, default=350
             Resolution of the figure in dots per inch.
 
-      gridspec_width_ratios : dict[str, list[int]], default={'width_ratios': [3, 1]}
+      gridspec_width_ratios : dict[str, list[int]], default={'width_ratios':[3,1]}
             Width ratios for subplots when using matplotlib gridspec.
 
-      round_value : int, default=2
-            Decimal precision for calculated statistics.
-
-      tickinterval : int, default=2
-            Interval between ticks on the charts.
+      show : bool, default=False
+            Whether to display the figure immediately.
 
       show_subplot_titles : bool, default=False
             Whether to display titles above each subplot.
@@ -350,6 +491,8 @@ class ComboChartConfig:
       subplot_titles : list[str], default=["X chart", "Histogram"]
             Titles for the individual subplots.
 
+      📊 Chart Styling & Lines
+      ────────────────────────────────────────
       ave_linestyle : str, default='-'
             Line style for average/central line.
 
@@ -368,18 +511,8 @@ class ComboChartConfig:
       ac_markersize : int, default=9
             Marker size for assignable causes on X chart.
 
-      legend_fontsize : int, default=12
-            Font size for legend text.
-
-      show_capabilities : bool, default=True
-            Whether to display process capability indices.
-
-      restrict_UPL : bool, default=False
-            Whether to restrict the Upper Process Limit.
-
-      restrict_LPL : bool, default=True
-            Whether to restrict the Lower Process Limit.
-
+      🏷 Labels & Fonts
+      ────────────────────────────────────────
       label_fontsize : int, default=10
             Font size for axis labels.
 
@@ -389,78 +522,110 @@ class ComboChartConfig:
       sub_title_fontsize : int, default=14
             Font size for subplot titles.
 
-      show_xticks : bool, default=True
-            Whether to display x-axis ticks on subplots.
+      rotate_labels : int, default=0
+            Rotation angle for x-axis labels.
+
+      📈 Capability & Limits
+      ────────────────────────────────────────
+      show_capabilities : bool, default=True
+            Whether to display process capability indices.
+
+      restrict_UPL : bool, default=False
+            Whether to restrict the Upper Process Limit.
+
+      restrict_LPL : bool, default=True
+            Whether to restrict the Lower Process Limit.
 
       show_limit_values : bool, default=True
             Whether to display numeric limit values.
 
-      rotate_labels : int, default=0
-            Rotation angle for x-axis labels.
-
-      show : bool, default=False
-            Whether to display the figure immediately.
+      ✅ Legend
+      ────────────────────────────────────────
+      legend_fontsize : int, default=12
+            Font size for legend text.
       """
-      # --- Figure/Layout ---
+
+      # 🎨 Figure & Layout
       figsize: tuple[float, float] = (15, 6)
       dpi: int = 350
       gridspec_width_ratios: dict[str, list[int]] = field(default_factory=lambda: {'width_ratios': [3, 1]})
+
+      show: bool = False
       show_subplot_titles: bool = False
       subplot_titles: list[str] = field(default_factory=lambda: ["X chart", "Histogram"])
-      show: bool = False
 
-      # --- Axis & Ticks ---
-      tickinterval: int = 2
-      xtick_fontsize: int = 10
-      label_fontsize: int = 10
-      rotate_labels: int = 0
-      show_xticks: bool = True
-
-      # --- Lines & Markers ---
+      # 📊 Chart Styling & Lines
       ave_linestyle: str = '-'
       xchart_linestyle: str = '-'
+      show_hist_mean: bool = False
       mean_marker_size: int = 150
       arrow_linewidth: float = 0.25
       ac_markersize: int = 9
 
-      # --- Annotations & Labels ---
+      # 🏷 Labels & Fonts
+      label_fontsize: int = 10
+      xtick_fontsize: int = 10
       sub_title_fontsize: int = 14
-      legend_loc: str = 'best'
-      legend_fontsize: int = 12
-      show_hist_mean: bool = False
-      show_limit_values: bool = True
+      rotate_labels: int = 0
+      show_xticks: bool = True
 
-      # --- Statistics/Values ---
-      round_value: int = 2
+      # 📈 Capability & Limits
       show_capabilities: bool = True
       restrict_UPL: bool = False
       restrict_LPL: bool = True
+      show_limit_values: bool = True
+      round_value: int = 2
+
+      # ✅ Legend
+      legend_loc: str = 'best'
+      legend_fontsize: int = 12
+
 
 @dataclass
 class TaguchiLossConfig:
       """
-      Configuration settings for visualizing a Taguchi loss function overlayed on a histogram.
+      Configuration settings for visualizing a Taguchi loss function
+      overlaid on a histogram.
 
-      This class defines parameters controlling figure size, DPI, plotting styles,
-      annotations, gridlines, legend display, and tick alignment.
+      Parameters are organized by functional group to mirror the
+      documentation structure.
 
       Parameters
       ----------
+      🎨 Figure & Layout
+      ────────────────────────────────────────
       figsize : tuple[float, float], default=(15, 5)
             Width and height of the figure.
 
       dpi : int, default=350
             Resolution of the figure in dots per inch.
 
-      round_value : int, default=2
-            Decimal precision for calculated statistics.
+      safety_factor : float, default=1.3
+            Multiplier for vertical spacing of annotations.
 
-      legend_round_value : int, default=2
-            Decimal precision for values shown in the legend.
+      align_xticks_with_bins : str, default="None"
+            Alignment of xticks relative to histogram bins.
+            Options: "None", "Centers", "Edges".
 
-      legend_loc : str, default='best'
-            Location of the legend.
+      rotate_xtick_labels : int, default=0
+            Rotation angle for x-axis tick labels.
 
+      show_xtick_labels : bool, default=True
+            Whether to display x-axis tick labels.
+
+      show_grid : bool, default=True
+            Whether to display a grid in the background.
+
+      remove_all_spines : bool, default=True
+            Whether to remove all chart spines (borders).
+
+      📊 Histogram Overlay
+      ────────────────────────────────────────
+      histogram_color : str, default='tab:blue'
+            Color of the histogram overlay.
+
+      📉 Taguchi Loss Function Styling
+      ────────────────────────────────────────
       lx_linewidth : float, default=3
             Line width of the Taguchi loss function plot.
 
@@ -470,73 +635,74 @@ class TaguchiLossConfig:
       lx_linestyle : str, default='-'
             Line style for the Taguchi loss function.
 
-      histogram_color : str, default='tab:blue'
-            Color of the histogram overlay.
-
-      show_label_values : bool, default=True
-            Whether to display numeric annotation values.
-
-      safety_factor : float, default=1.3
-            Multiplier for vertical spacing of annotations.
-
-      label_fontsize : int, default=14
-            Font size for annotation labels.
+      🏷 Statistical Labels & Annotations
+      ────────────────────────────────────────
+      show_mean_label : bool, default=True
+            Whether to display the mean value annotation.
 
       show_target_label : bool, default=True
             Whether to display the target value annotation.
 
-      show_mean_label : bool, default=True
-            Whether to display the mean value annotation.
+      show_label_values : bool, default=True
+            Whether to display numeric annotation values.
+
+      label_fontsize : int, default=14
+            Font size for annotation labels.
+
+      round_value : int, default=2
+            Decimal precision for calculated statistics.
 
       target_arrow_color : str, default='black'
             Color of the arrow pointing to the target value.
 
+      📈 Capability Metrics & Legend
+      ────────────────────────────────────────
       show_indices : bool, default=False
             Whether to display the process capability indices.
 
-      show_grid : bool, default=True
-            Whether to display a grid in the background.
+      legend_round_value : int, default=2
+            Decimal precision for values shown in the legend.
 
-      align_ticks_with_bins : str, default="None"
-            Alignment of x-axis ticks relative to histogram bins ("None", "Centers", "Edges").
-
-      rotate_xtick_labels : int, default=0
-            Rotation angle for x-axis tick labels.
-
-      show_xtick_labels : bool, default=True
-            Whether to display x-axis tick labels.
-
-      remove_all_spines : bool, default=True
-            Whether to remove all chart spines (borders).
+      legend_loc : str, default='best'
+            Location of the legend.
       """
-      # --- Figure/Layout ---
+
+      # 🎨 Figure & Layout
       figsize: tuple[float, float] = (15, 5)
       dpi: int = 350
-      show_grid: bool = True
-      remove_all_spines: bool = False
+      safety_factor: float = 1.3
 
-      # --- Axis & Ticks ---
-      align_ticks_with_bins: str = "None"  # Options: "None", "Centers", "Edges"
+      align_xticks_with_bins: str = "None"  # Options: "None", "Centers", "Edges"
       rotate_xtick_labels: int = 0
       show_xtick_labels: bool = True
 
-      # --- Lines & Markers ---
+      show_grid: bool = True
+      remove_all_spines: bool = False
+
+      # 📊 Histogram Overlay
+      histogram_color: str = 'tab:blue'
+
+      # 📉 Taguchi Loss Function Styling
       lx_linewidth: float = 3
       lx_color: str = 'black'
       lx_linestyle: str = '-'
-      histogram_color: str = 'tab:blue'
 
-      # --- Annotations & Labels ---
-      label_fontsize: int = 14
-      show_label_values: bool = True
+      # 🏷 Statistical Labels & Annotations
       show_mean_label: bool = True
-      target_arrow_color: str = 'black'
-      legend_loc: str = 'best'
-      legend_round_value: int = 2
+      show_target_label: bool = True
+      show_label_values: bool = True
 
-      # --- Statistics/Values ---
+      label_fontsize: int = 14
       round_value: int = 2
+      EL_round_value: int = 2  # Expected loss rounding precision
+
+      target_arrow_color: str = 'black'
+
+      # 📈 Capability Metrics & Legend
       show_indices: bool = False
+      legend_round_value: int = 2
+      legend_loc: str = 'best'
+
 
 # --- LIMIT CHART CONFIGURATIONS ---
 @dataclass
@@ -544,76 +710,87 @@ class LimitChartConfig:
       """
       Configuration settings for a single Limit Chart.
 
-      This class defines parameters controlling figure layout, axes, 
-      lines, markers, and annotations for a Limit Chart visualization.
-
+      This class defines parameters controlling figure layout, axes, lines, 
+      markers, and annotations for a Limit Chart visualization.
+      
       Parameters
       ----------
+      🎨 Figure & Layout
+      ────────────────────────────────────────
       figsize : tuple[float, float], default=(15, 5)
-            Width and height of the figure in inches.
+      Width and height of the figure in inches.
 
       dpi : int, default=350
-            Resolution of the figure in dots per inch.
+      Resolution of the figure in dots per inch.
 
       show : bool, default=False
-            Whether to display the chart immediately after plotting.
+      Whether to display the chart immediately after plotting.
 
+      📝 Title & Labels
+      ────────────────────────────────────────
       chart_title : str, default='LC'
-            Title of the chart.
+      Title of the chart.
 
       show_chart_title : bool, default=False
-            Whether to display the chart title.
-
-      tickinterval : int, default=2
-            Interval between ticks on the x-axis.
-
-      rotate_labels : int, default=0
-            Rotation angle for x-axis tick labels in degrees.
-
-      xtick_fontsize : int, default=10
-            Font size for x-axis tick labels.
-
-      show_xticks : bool, default=True
-            Whether to display x-axis ticks.
-
-      show_ytick_labels : bool, default=True
-            Whether to display y-axis tick labels.
-
-      label_fontsize : int, default=10
-            Font size for axis labels.
+      Whether to display the chart title.
 
       limit_chart_ylabel : str, default=''
-            Label for the y-axis.
+      Label for the y-axis.
 
+      label_fontsize : int, default=10
+      Font size for axis labels.
+
+      ✅ Axes & Ticks
+      ────────────────────────────────────────
+      tickinterval : int, default=2
+      Interval between ticks on the x-axis.
+
+      rotate_labels : int, default=0
+      Rotation angle for x-axis tick labels in degrees.
+
+      xtick_fontsize : int, default=10
+      Font size for x-axis tick labels.
+
+      show_xticks : bool, default=True
+      Whether to display x-axis ticks.
+
+      show_ytick_labels : bool, default=True
+      Whether to display y-axis tick labels.
+
+      📊 Lines & Styling
+      ────────────────────────────────────────
       linestyle : str, default='-'
-            Line style for the main data line.
+      Line style for the main data line.
 
       mean_linestyle : str, default='-'
-            Line style for the mean/central line.
+      Line style for the mean/central line.
 
       target_line_color : str, default='tab:green'
-            Color of the target line.
+      Color of the target line.
 
       target_linestyle : str, default='--'
-            Line style for the target line.
+      Line style for the target line.
 
+      🏷 Annotations & Statistics
+      ────────────────────────────────────────
       show_label_values : bool, default=True
-            Whether to display numeric values as annotations on the chart.
+      Whether to display numeric values as annotations on the chart.
 
       show_mean : bool, default=True
-            Whether to display the mean line on the chart.
+      Whether to display the mean line on the chart.
 
       round_value : int, default=2
-            Number of decimal places for rounding calculated values.
+      Number of decimal places for rounding calculated values.
       """
-      # --- Figure/Layout ---
+
+      # 🎨 Figure & Layout
       figsize: tuple[float, float] = (15, 5)
       dpi: int = 350
       show: bool = False
-      limit_chart_title: str = 'Limit Chart'
+      chart_title: str = 'Limit Chart'
       show_chart_title: bool = False
 
-      # --- Axis & Ticks ---
+      # ✅ Axes & Ticks
       tickinterval: int = 2
       rotate_labels: int = 0
       xtick_fontsize: int = 10
@@ -623,21 +800,20 @@ class LimitChartConfig:
       limit_chart_ylabel: str = ''
       limit_title_fontsize: int = 14
 
-      # --- Lines & Markers ---
-      linestyle: str = '-'                # X chart line style
-      mean_linestyle: str = '-'           # Mean/central line style
+      # 📊 Lines & Styling
+      linestyle: str = '-'               # X chart line style
+      mean_linestyle: str = '-'          # Mean/central line style
       target_line_color: str = 'tab:green'
       target_linestyle: str = '--'
 
-      # --- Annotations & Labels ---
+      # 🏷 Annotations & Statistics
       show_label_values: bool = True
-      show_mean: bool = True              # Whether to display the mean line
-
-      # --- Statistics/Values ---
+      show_mean: bool = True         
       round_value: int = 2
+      
 
 @dataclass
-class LimitChartNetworkAnalysisConfig:
+class LCNAConfig:
     """
     Configuration settings for a network of Limit Charts (multiple subplots).
 
@@ -646,96 +822,104 @@ class LimitChartNetworkAnalysisConfig:
 
     Parameters
     ----------
-    figsize : tuple[float, float], default=(15, 5)
-        Width and height of the figure in inches.
+      🎨 Figure & Layout
+      ────────────────────────────────────────
+      figsize : tuple[float, float], default=(15, 5)
+      Width and height of the figure in inches.
 
-    dpi : int, default=350
-        Resolution of the figure in dots per inch.
+      dpi : int, default=350
+      Resolution of the figure in dots per inch.
 
-    show : bool, default=False
-        Whether to display the figure immediately after creation.
+      show : bool, default=False
+      Whether to display the figure immediately after creation.
 
-    hspace : float, default=0.0
-        Vertical space between subplots.
-        
-    sharey : bool, default=True
-        Whether to share the y-axis across subplots.
+      hspace : float, default=0.2
+      Vertical space between subplots.
 
-    tickinterval : int, default=2
-        Interval between ticks on the x-axis.
+      sharey : bool, default=True
+      Share the y-axis across subplots.
 
-    rotate_labels : int, default=0
-        Rotation angle for x-axis tick labels in degrees.
+      ✅ Axes & Ticks
+      ────────────────────────────────────────
+      tickinterval : int, default=2
+      Interval between ticks on the x-axis.
 
-    xtick_fontsize : int, default=10
-        Font size for x-axis tick labels.
+      rotate_labels : int, default=0
+      Rotation angle for x-axis tick labels in degrees.
 
-    show_xticks : bool, default=False
-        Whether to display x-axis ticks on subplots.
+      xtick_fontsize : int, default=10
+      Font size for x-axis tick labels.
 
-    show_yticks : bool, default=True
-        Whether to display y-axis ticks on subplots.
+      show_xticks : bool, default=False
+      Whether to display x-axis ticks on subplots.
 
-    ylabel_fontsize : int, default=10
-        Font size for axis labels.
+      show_yticks : bool, default=True
+      Whether to display y-axis ticks on subplots.
 
-    limit_chart_ylabel : str, default=''
-        Label for the y-axis on the first column of subplots.
+      ylabel_fontsize : int, default=10
+      Font size for axis labels.
 
-    linestyle : str, default='-'
-        Line style for the main data line in subplots.
+      limit_chart_ylabel : str, default=''
+      Label for the y-axis on the first column of subplots.
 
-    mean_linestyle : str, default='-'
-        Line style for the mean/central line in subplots.
+      📊 Lines & Styling
+      ────────────────────────────────────────
+      linestyle : str, default='-'
+      Line style for the main data line in subplots.
 
-    target_line_color : str, default='tab:green'
-        Color of the target line.
+      mean_linestyle : str, default='-'
+      Line style for the mean/central line in subplots.
 
-    target_linestyle : str, default='--'
-        Line style for the target line.
+      target_line_color : str, default='tab:green'
+      Color of the target line.
 
-    show_chart_title : bool, default=False
-        Whether to display subplot titles.
+      target_linestyle : str, default='--'
+      Line style for the target line.
 
-    show_label_values : bool, default=True
-        Whether to display numeric values as annotations on the charts.
+      📝 Title & Annotations
+      ────────────────────────────────────────
+      show_chart_title : bool, default=False
+      Whether to display subplot titles.
 
-    show_mean : bool, default=True
-        Whether to display the mean line on subplots.
+      show_label_values : bool, default=True
+      Whether to display numeric values as annotations on the charts.
 
-    round_value : int, default=2
-        Number of decimal places for rounding calculated values.
-    """
-    # --- Figure/Layout ---
+      show_mean : bool, default=True
+      Whether to display the mean line on subplots.
+
+      round_value : int, default=2
+      Number of decimal places for rounding calculated values.
+      """
+    # --- Figure & Layout ---
     figsize: tuple[float, float] = (15, 6)
     dpi: int = 350
     show: bool = True
     hspace: float = 0.2
     sharey: bool = True
-
-    # --- Axis & Ticks ---
+    
+    # --- Axes & Ticks ---
     tickinterval: int = 2
     rotate_labels: int = 0
     xtick_fontsize: int = 10
     show_xticks: bool = False
     show_yticks: bool = True
-    ylabel_fontsize: int = 10
-    limit_chart_ylabel: str = ''
     ylabel_fontsize: int = 12
+    limit_chart_ylabel: str = ''
     limit_title_fontsize: int = 12
-
-    # --- Lines & Markers ---
+    
+    # --- Lines & Styling ---
     linestyle: str = '-'                # X chart line style
     mean_linestyle: str = '-'           # Mean/central line style
     target_line_color: str = 'tab:green'
     target_linestyle: str = '--'
-
-    # --- Annotations & Labels ---
+    
+    # --- Title & Annotations ---
     show_chart_title: bool = False
     show_mean: bool = True              # Whether to display the mean line
-
+    
     # --- Statistics/Values ---
     round_value: int = 2
+
 
 def highlight_assignable_causes(ax, 
                                 labels, 

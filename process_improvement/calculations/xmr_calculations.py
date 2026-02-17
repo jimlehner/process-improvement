@@ -158,6 +158,30 @@ def calculate_xmr_limits(
 def characterize_x_variation(values: pd.Series, 
                          LPL: float, 
                          UPL: float) -> pd.Series:
+        """
+        Classifies each observation in an X chart as common cause of routine
+        variation or assignable cause of exceptional variation.
+
+        Parameters
+        ----------
+        values : pd.Series
+            Series of individual measurements.
+        LPL : float
+            Lower process limit (control limit).
+        UPL : float
+            Upper process limit (control limit).
+
+        Returns
+        -------
+        pd.Series
+            A Series labeled "X chart variation" containing:
+            - "Assignable Cause" if the value lies outside the control limits
+            - "Common Cause" otherwise
+
+        Notes
+        -----
+        This function evaluates the underlying causal system that 
+        """
         return pd.Series(
              np.where(
                   (values > UPL) | (values < LPL),
@@ -171,6 +195,30 @@ def characterize_x_variation(values: pd.Series,
 def characterize_mr_variation(
           mr: pd.Series,
           URL: float) -> pd.Series:
+      """
+      Classifies moving range observations as common cause of routine
+      variation or assignable cause of exceptional variation.
+
+      Parameters
+      ----------
+      mr : pd.Series
+          Series of moving range values calculated from consecutive observations.
+      URL : float
+          Upper range limit (process limit) for the moving range chart.
+
+      Returns
+      -------
+      pd.Series
+          A Series labeled "mR chart variation" containing:
+          - "Assignable Cause" if the moving range exceeds the upper range limit
+          - "Common Cause" otherwise
+
+      Notes
+      -----
+      The moving range chart evaluates value-to-value process variation.
+      Only an upper limit is used with the moving ranges because they
+      cannot be negative.
+      """
       return pd.Series(
           np.where(
                mr > URL,

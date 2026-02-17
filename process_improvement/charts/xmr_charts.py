@@ -23,6 +23,7 @@ from .utils import (
     highlight_assignable_causes, 
     create_masked_values, 
     XmRChartConfig,
+    XmRCompConfig,
     NetworkAnalysisConfig
     )
 
@@ -102,7 +103,9 @@ def xmr_chart(df: pd.DataFrame,
 
     data = df[values]
     moving_ranges = calculate_moving_range(data, config.round_value)
-    labels = df[x_labels].apply(lambda x: int(x) if pd.notna(x) and float(x).is_integer() else x).astype(str)
+    labels = df[x_labels].apply(
+        lambda x: str(int(x)) if pd.notna(x) and isinstance(x, (int, float)) and float(x).is_integer() else str(x)
+                                )
 
     # Add moving range to df as column
     df['Moving Range'] = pd.Series(moving_ranges)
@@ -138,10 +141,10 @@ def xmr_chart(df: pd.DataFrame,
     line_style = "-" if connect_points else ""
 
     # Define chart elements in structured lists
-    xchart_lines = [(mean, config.ave_linestyle, 'black'), 
+    xchart_lines = [(mean, config.mean_linestyle, 'black'), 
                     (UPL, '--', '#d72323'), 
                     (LPL, '--', '#d72323')]
-    mrchart_lines = [(average_mR, config.ave_linestyle, 'black'), 
+    mrchart_lines = [(average_mR, config.mean_linestyle, 'black'), 
                      (URL, '--', '#d72323')]
 
     fig, axs = plt.subplots(nrows=2, 
@@ -311,10 +314,10 @@ def xmr_comparison(
         wspace: Optional[float] = 0.0,
         tickintervals: Optional[List[int]] = None,
         subplot_titles: Optional[List[str]] = None,
-        config: Optional[XmRChartConfig] = None,
+        config: Optional[XmRCompConfig] = None,
         ) -> XmRComparisonResults:
     """
-    Generate a grid of XmR (Individuals and Moving Range) charts from multiple datasets.
+    Generate a grid of XmR charts (Individuals and Moving Range) charts from multiple datasets.
 
     For each DataFrame in `df_list`, this function produces:
         - an X chart (top row) showing individual values with mean and control limits,
@@ -411,8 +414,9 @@ def xmr_comparison(
     for idx, (df, title) in enumerate(zip(df_list, subplot_titles)):
         data = df[values].reset_index(drop=True)
         # labels = df[x_labels].astype(str).reset_index(drop=True)
-        labels = df[x_labels].apply(lambda x: int(x) if pd.notna(x) and float(x).is_integer() else x).astype(str)
-        
+        labels = df[x_labels].apply(
+        lambda x: str(int(x)) if pd.notna(x) and isinstance(x, (int, float)) and float(x).is_integer() else str(x)
+                                )
         # Calculate moving ranges
         moving_ranges = calculate_moving_range(data, config.round_value)
 
@@ -463,13 +467,13 @@ def xmr_comparison(
         
         # Define X chart elements in structured list
         xchart_lines = [
-            (mean, config.ave_linestyle, "black"),
+            (mean, config.mean_linestyle, "black"),
             (UPL, "--", '#d72323'),
             (LPL, "--", '#d72323')
         ]
         # Define mR chart elements in structured list
         mrchart_lines = [
-            (average_mR, config.ave_linestyle, "black"),
+            (average_mR, config.mean_linestyle, "black"),
             (URL, "--", '#d72323'),
         ]
 
@@ -829,7 +833,7 @@ def network_analysis(
             
             # Define X chart elements in structured list
             xchart_lines = [
-                (mean, config.ave_linestyle, "black"),
+                (mean, config.mean_linestyle, "black"),
                 (UPL, "--", '#d72323'),
                 (LPL, "--", '#d72323')
             ]

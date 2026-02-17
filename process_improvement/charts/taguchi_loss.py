@@ -15,15 +15,23 @@ from process_improvement.calculations.xmr_calculations import (
 )
 # Imports for Taguchi Loss Function
 from process_improvement.charts.utils import TaguchiLossConfig
-from process_improvement.calculations.loss_function_calculations import taguchi_loss_calcs
-from .results import TaguchiLossResults
+from process_improvement.calculations.loss_function_calculations import(
+    taguchi_loss_calcs, 
+    expected_loss_calc
+)
+
+from .results import (
+     TaguchiLossResults,
+     ExpectedLossCalcResults
+     )
 
 def taguchi_loss_function(
         data: pd.Series,
         USL: float,
         LSL: float,
         Target: Optional[float] = None,
-        bins: float or str = 'auto',
+        cost_of_scrap: Optional[float] = 1,
+        bins: Optional[float or str] = 'auto',
         config: Optional[TaguchiLossConfig] = None
         ) -> TaguchiLossResults:
         """
@@ -54,6 +62,9 @@ def taguchi_loss_function(
         Target : float, optional
             Target (nominal) value for the process. If not provided, the midpoint
             between USL and LSL is used.
+        
+        cost_of_scrap : float, default is 1
+            Cost of loss at specification limits in dollars ($).
 
         bins : float or str, default 'auto'
             Bin specification for the histogram. Passed directly to seaborn.histplot.
@@ -178,8 +189,21 @@ def taguchi_loss_function(
         sigmaX = ratios.sigmaX
         mean = ratios.mean
         s = ratios.s
-    
-        # --- LOSS FUNCTION CALCULATIONS ---
+
+        # --- CALCULATED EXPECTED LOSS ---
+        expected_loss_results = expected_loss_calc(
+             data=data,
+             USL=USL,
+             LSL=LSL,
+             Target=Target,
+             cost_of_scrap=cost_of_scrap
+             )
+
+        print(expected_loss_results)
+
+        expected_loss = expected_loss_results.df["Value"].iloc[0]
+
+        # --- LOSS FUNCTION CURVE CALCULATIONS ---
         taguchi_results = taguchi_loss_calcs(USL=USL, LSL=LSL, Target=Target)
         # Get the max value of the loss function
         loss_y_max = taguchi_results.df['Y values'].max()
@@ -305,12 +329,14 @@ def taguchi_loss_function(
 
         # --- LEGEND FORMATTING ---
         # Define labels for the legend
-        ratios = {'Cp': Cp, 'Cpk': Cpk, 'Pp': Pp, 'Ppk': Ppk}
+        legend_values = {'E[L(x)]': expected_loss, "Mean": mean, "Stdev": s}
         patches = [
-            mpatches.Patch(color='none', 
-                        label=f'{key}: {value:.{config.legend_round_value}}'
-                        ) 
-                        for key, value in ratios.items()
+            mpatches.Patch(
+                 color='none',
+                 label=f'{key}: ${value:.{config.legend_round_value}f}' if key == 'E[L(x)]'
+              else f'{key}: {value:.{config.legend_round_value}f}'
+              )
+                        for key, value in legend_values.items()
                         ]
         if config.show_indices:
             leg = axs.legend(handles=patches, 
@@ -360,14 +386,14 @@ def taguchi_loss_function(
         # --- STATISTICS DATAFRAME ---
         stats_df = pd.DataFrame({
             "Metric": [
-                "Mean", "UPL", "LPL", "URL", "Average mR",
+                 "E{L(x)}", "Mean", "UPL", "LPL", "URL", "Average mR",
                 "USL", "LSL", "Target",
                 "Cp", "Cpk", "Pp", "Ppk", "DNS",
                 "Sigma Within (Sigma(x))", "Sigma Overall (stdev)",
                 "Characterization"
             ],
             "Value": [
-                mean, UPL, LPL, URL, average_mR,
+                expected_loss, mean, UPL, LPL, URL, average_mR,
                 USL, LSL, Target,
                 Cp, Cpk, Pp, Ppk, DNS,
                 sigmaX, s,
@@ -379,3 +405,59 @@ def taguchi_loss_function(
              fig=fig,
              stats_df=stats_df
         )
+
+# --- FUNCTION TESTING ---
+# Path to data
+current_file = Path(__file__).resolve()
+
+# Path to data folder (relative to the test_xmr_chart.py)
+data_file = current_file.parent.parent / "data" / "shewharts_resistance_measurements.csv"
+
+# Load the data
+df = pd.read_csv(data_file)
+initial_df = df[df['Stage'] == 'Initial']
+additional_df = df[df['Stage'] == 'Additional']
+data = initial_df['Resistance']
+data2 = additional_df['Resistance']
+
+# Define the folder to save figures
+# figures_folder = current_file.parent.parent / "tests" / "test_figures"
+figures_folder = Path(__file__).resolve().parent / "test_figures"
+figures_folder.mkdir(exist_ok=True) # Create folder if missing
+
+# Find next available number
+existing_files = list(figures_folder.glob("loss_function_*.png"))
+if existing_files:
+    # Extract number from exisiting file names
+    existing_numbers = [int(f.stem.split("_")[-1]) for f in existing_files]
+    next_number = max(existing_numbers) + 1
+else:
+    next_number = 1
+
+data = initial_df['Resistance']
+
+config = TaguchiLossConfig(
+      figsize=(15,5),
+      legend_loc='upper left',
+      show_grid=False,
+    #   legend_round_value=2,
+      show_label_values=False,
+      align_ticks_with_bins='Centers',
+      show_indices=True,
+      show_xtick_labels=True,
+      show_mean_label=True,
+      remove_all_spines=False
+      )
+
+results = taguchi_loss_function(data=data,
+                                USL=5295,
+                                LSL=3395,
+                                Target=4345,
+                                cost_of_scrap=1000,
+                                bins='auto',
+                                config=config)
+print(results.fig)
+print("Save figure to:", figures_folder)
+save_path = figures_folder / f"taguchi_loss_{next_number}.png"
+
+results.fig.savefig(save_path, bbox_inches='tight')

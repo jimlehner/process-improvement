@@ -8,7 +8,7 @@ with open('README.md', 'r', encoding='utf-8') as f:
 
 setup(
     name='process_improvement',
-    version='1.1.5',
+    version='1.1.7',
     packages=find_packages(),
     description='A Python library for performing calculations and generating figures that facilitate an understanding of process variation.',
     long_description=long_description,

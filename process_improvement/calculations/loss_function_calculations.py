@@ -2,7 +2,11 @@ from typing import Optional
 import pandas as pd
 import numpy as np
 
-from process_improvement.charts.results import TaguchiLossCalcResults
+from process_improvement.charts.results import(
+    TaguchiLossCalcResults,
+    ExpectedLossCalcResults
+    )
+
 
 def taguchi_loss_calcs(
         USL: float,
@@ -106,4 +110,51 @@ def taguchi_loss_calcs(
     
     return TaguchiLossCalcResults(
         df=results_df
+    )
+
+def expected_loss_calc(
+        data: pd.Series,
+        USL: float,
+        LSL: float,
+        Target: Optional[float] = None,
+        cost_of_scrap: Optional[float] = 1,
+        # round_value: Optional[float] = 1
+        ) -> dict[str, float or list]:
+    """
+    Docstring for expected_loss
+
+    A : Assigned loss at specification limits, default is 1
+    
+    """
+
+    # --- VALIDATION ---
+    if USL <= LSL:
+        raise ValueError("USL must be greater than LSL")   
+
+    # Set default target if not provided 
+    if Target is None:
+        Target = (USL + LSL) / 2
+
+    # --- CONFIGURATION ---
+    mean = data.mean()
+    stdev = data.std()
+
+    Tolerance = USL - LSL
+    x_scrap = Tolerance/2
+
+    # --- CALCULATIONS ---
+    K = cost_of_scrap/(x_scrap)**2
+
+    expected_loss = K*((mean - Target)**2 + stdev**2)
+
+    # --- RETURN ---
+    stats_df = pd.DataFrame({
+        "Metric": ["E{L(x)}", "Mean", "Stdev", "k", "Cost of Scrap ($)", 
+                   "USL", "LSL", "Target", "Tolerance"],
+        "Value": [expected_loss, mean, stdev, K, cost_of_scrap, 
+                  USL, LSL, Target, Tolerance]
+    })
+
+    return ExpectedLossCalcResults(
+        df=stats_df
     )

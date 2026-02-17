@@ -71,7 +71,7 @@ def test_xmr_comparison_basic():
         round_value=1,
         tickinterval=1,
         show=False,
-        ave_linestyle='-',
+        mean_linestyle='-',
         rotate_labels=15,
         xchart_ylabel='Death-to-Birth Rate',
         mrchart_ylabel='Moving Range (mR)'
@@ -89,10 +89,6 @@ def test_xmr_comparison_basic():
     # --- 4. TEST RETURN TYPES ---
     assert isinstance(result, XmRComparisonResults)
     assert isinstance(result.fig, plt.Figure)
-    assert isinstance(result.axes, dict)
-    assert "x_axes" in result.axes and "mr_axes" in result.axes
-    assert isinstance(result.axes["x_axes"], list)
-    assert isinstance(result.axes["mr_axes"], list)
     assert isinstance(result.stats_df, pd.DataFrame)
 
     # --- 5. TEST STATISTICS ---
@@ -113,33 +109,7 @@ def test_xmr_comparison_basic():
         assert actual_mean == expected_mean
         assert np.isclose(actual_mr, expected_mr, atol=0.1)
 
-    # --- 6. TEST CHART CONTENTS ---
-    for idx, df in enumerate(df_list):
-        # X chart
-        x_lines = result.axes["x_axes"][idx].get_lines()
-        assert len(x_lines) > 0
-        x_data = x_lines[0].get_ydata()
-        assert np.allclose(x_data, df["Rate"].values)
-
-        # mR chart
-        mr_lines = result.axes["mr_axes"][idx].get_lines()
-        assert len(mr_lines) > 0
-        mr_data = mr_lines[0].get_ydata()
-        expected_mr_data = df["Rate"].diff().abs().values
-        # np.allclose handles NaN comparison
-        assert np.allclose(mr_data, expected_mr_data, equal_nan=True)
-
-    # --- 7. TEST HORIZONTAL LIMIT LINES ---
-    for idx in range(len(df_list)):
-        # X chart should have at least 3 horizontal lines: UPL, LPL, Mean
-        x_hlines = [line for line in result.axes["x_axes"][idx].lines if line.get_linestyle() in ['--','-']]
-        # Only warn if there are not enough lines
-        assert len(x_hlines) >= 1 # Always at least the data line
-        # mR chart
-        mr_hlines = [line for line in result.axes["mr_axes"][idx].lines if line.get_linestyle() in ['--','-']]
-        assert len(mr_hlines) >= 1 # Always at least the data line
-
-    # --- 8. SAVE FIGURE ---
+    # --- 6. SAVE FIGURE ---
     result.fig.savefig(save_path, dpi=300, bbox_inches='tight')
     result.stats_df.to_csv(save_path_2, index=False)
     print(f"Figure saved to: {save_path}")

@@ -318,18 +318,18 @@ def capability_histogram(data: pd.Series,
         y_positions[label] = (x_pos, y_pos)
 
     # Scatter plot marker area in points^2
-    marker_area_pts2 = config.marker_area_pts2
-    marker_radius_pts = (marker_area_pts2 ** 0.5) / 2 # Radius in points
+    mean_marker_size = config.mean_marker_size
+    mean_marker_radius_pts = (mean_marker_size ** 0.5) / 2 # Radius in points
 
     # Convert from points to pixels
     fig_dpi = config.dpi
-    marker_radius_pixels = marker_radius_pts * fig_dpi / 72 # 1 point = 1/72 inch
+    mean_marker_radius_pixels = mean_marker_radius_pts * fig_dpi / 72 # 1 point = 1/72 inch
 
     # Convert one pixel in y-direction to data coordinates
     data_coord_0 = axs.transData.inverted().transform([(0, 0)])[0, 1]
     data_coord_1 = axs.transData.inverted().transform([(0, 1)])[0, 1]
     y_pixels_to_data = data_coord_1 - data_coord_0
-    marker_radius = marker_radius_pixels * y_pixels_to_data
+    mean_marker_radius = mean_marker_radius_pixels * y_pixels_to_data
 
     # Place marker at the mean
     sns.scatterplot(x=[mean],

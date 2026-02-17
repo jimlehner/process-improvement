@@ -20,7 +20,7 @@ def test_xmr_chart_basic():
     Test xmr_chart function with Shewharts resistance measurements
     
     Steps:
-    1. Create a small, controlled dataset.
+    1. Import a small dataset with known process statistics.
     2. Hard-code expected values for mean, UPL, LPL, average mR, and URL.
     3. Run xmr_chart
     4. Assert that calculated statistics match expected values.
@@ -31,7 +31,8 @@ def test_xmr_chart_basic():
     current_file = Path(__file__).resolve()
 
     # Path to data folder (relative to the test_xmr_chart.py)
-    data_file = current_file.parent.parent / "data" / "software_verification_death_to_birth_rates.csv"
+    # data_file = current_file.parent.parent / "data" / "software_verification_death_to_birth_rates.csv"
+    data_file = current_file.parent.parent / "process_improvement" / "data" / "software_verification_death_to_birth_rates.csv"
 
     # Load the data
     df = pd.read_csv(data_file)
@@ -60,8 +61,8 @@ def test_xmr_chart_basic():
         label_fontsize=14,
         round_value=2,
         tickinterval=1,
-        show=True,
-        ave_linestyle='-',
+        show=False,
+        mean_linestyle='-',
         rotate_labels=45, 
         xchart_ylabel='Death-to-Birth Rate',
         mrchart_ylabel='mR'
@@ -76,29 +77,29 @@ def test_xmr_chart_basic():
     )
 
     result.fig.savefig(save_path)
-    result.statistics.to_csv(save_path_2, index=False)
+    result.stats_df.to_csv(save_path_2, index=False)
 
     # ---1. TEST RETURN TYPES ---
     assert hasattr(result, "fig")
     assert hasattr(result, "axes")
-    assert hasattr(result, "statistics")
+    assert hasattr(result, "stats_df")
     assert hasattr(result, "data")
 
     assert isinstance(result.fig, plt.Figure)
     assert isinstance(result.axes, tuple)
-    assert isinstance(result.statistics, pd.DataFrame)
+    assert isinstance(result.stats_df, pd.DataFrame)
     assert isinstance(result.data, pd.DataFrame)
 
     # --- 2. TEST NUMERIC CORRECTENESS ---
     # X chart centraline (mean)
     expected_mean = round(df["Rate"].mean(), config.round_value)
-    actual_mean = result.statistics.loc[result.statistics["Process Stats"] == "Mean", "Values"].values[0]
+    actual_mean = result.stats_df.loc[result.stats_df["Process Stats"] == "Mean", "Values"].values[0]
     assert actual_mean == expected_mean
 
     # mR chart central line (average moving range)
     moving_ranges = df["Rate"].diff().abs().dropna()
     expected_avg_mr = round(moving_ranges.mean(), config.round_value)
-    actual_avg_mr = result.statistics.loc[result.statistics["Process Stats"] == "Ave. mR", "Values"].values[0]
+    actual_avg_mr = result.stats_df.loc[result.stats_df["Process Stats"] == "Ave. mR", "Values"].values[0]
     assert actual_avg_mr == expected_avg_mr
 
     # --- 3. TEST CHART CONTENTS ---

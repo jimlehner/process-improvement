@@ -239,6 +239,17 @@ class TaguchiLossCalcResults:
     df: pd.DataFrame
 
 @dataclass
+class ExpectedLossCalcResults:
+    """
+    Container for expected loss calculation results. 
+
+    This class stores the DataFrame of values associated with, and 
+    the results from, the calculation of expected loss due to poor 
+    quality using the Taguchi loss function. 
+    """
+    df: pd.DataFrame
+
+@dataclass
 class TaguchiLossResults:
     """
     Container for results from a Taguchi loss function analysis.
