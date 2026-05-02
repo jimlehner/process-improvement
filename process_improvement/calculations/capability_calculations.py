@@ -13,7 +13,7 @@ def calculate_capability_indices(
         LSL: int,
         Target: int,
         round_value: int = 2,
-        ) -> dict[str, float]:
+        ) -> ProcessCapabilityIndices:
         """
         Calculate process capability and performance indices.
 
