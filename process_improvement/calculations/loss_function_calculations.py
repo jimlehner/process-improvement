@@ -117,7 +117,7 @@ def expected_loss_calc(
         USL: float,
         LSL: float,
         Target: Optional[float] = None,
-        cost_of_scrap: Optional[float] = 1,
+        cost_of_scrap: float = 1,
         # round_value: Optional[float] = 1
         ) -> ExpectedLossCalcResults:
     """

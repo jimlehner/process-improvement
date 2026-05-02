@@ -169,7 +169,7 @@ The `xmr_comparison` function generates a grid of XmR charts that contain proces
 
 ## Configuration and Usage
 
-Configuration and usage details for each function can be found in [USAGE.md](docs/USAGE.md)
+Configuration and usage details for each function can be found in [USAGE.md](USAGE.md)
 
 ## Project Structure
 
