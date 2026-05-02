@@ -196,12 +196,12 @@ def capability_histogram(data: pd.Series,
     bin_heights = [patch.get_height() for patch in histplot.patches]
 
     # --- Conditionally align x-axis ticks ---
-    if config.align_x_ticks_with_bins in ("Centers", "Edges") and histplot.patches:
+    if config.align_xticks_with_bins in ("Centers", "Edges") and histplot.patches:
         # Compute bin edges
         bin_edges = [patch.get_x() for patch in histplot.patches] + \
                     [histplot.patches[-1].get_x() + histplot.patches[-1].get_width()]
 
-        if config.align_x_ticks_with_bins == "Centers":
+        if config.align_xticks_with_bins == "Centers":
             # Tick positions at the **center of each bin**
             bin_positions = [(bin_edges[i] + bin_edges[i+1]) / 2 for i in range(len(bin_edges)-1)]
         else:  # "Edges"
@@ -334,7 +334,7 @@ def capability_histogram(data: pd.Series,
     # Place marker at the mean
     sns.scatterplot(x=[mean],
                 y=[bin_height_mean],
-                s=marker_area_pts2,
+                s=mean_marker_size,
                 c='tab:blue', 
                 zorder=2)
 
@@ -343,7 +343,7 @@ def capability_histogram(data: pd.Series,
         (LSL, bin_height_LSL, '#868686'), 
         (USL, bin_height_USL, '#868686'),
         (Target, bin_height_target, config.target_arrow_color),
-        (mean, bin_height_mean + marker_radius, config.mean_arrow_color)
+        (mean, bin_height_mean + mean_marker_radius, config.mean_arrow_color)
     ]
     
     # Loop through each arrow and annotation

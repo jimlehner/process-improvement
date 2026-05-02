@@ -307,6 +307,7 @@ class LimitChartNetworkAnalysisResults:
     ----------
     fig : plt.Figure
         Matplotlib Figure object containing a grid of limit charts.
+        
     stats_df : pd.DataFrame
         DataFrame containing calculated limit chart statistics and
         summary values used to construct and interpret the chart.
@@ -314,4 +315,20 @@ class LimitChartNetworkAnalysisResults:
         total count outside of spec.
     """
     fig: plt.Figure
+    stats_df: pd.DataFrame
+
+@dataclass
+class TrendXchartResults:
+    """
+    Container for results of trended X chart analysis.
+
+    Attributes
+    ----------
+    fig : plt.Figure
+        Matplotlib Figure object containing a grid of limit charts.
+
+    stats_df : pd.DataFrame
+        DataFrame containing process statistics for the trended x chart.
+    """
+    fig: Figure
     stats_df: pd.DataFrame

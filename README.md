@@ -94,7 +94,7 @@ xmr_result = xmr_chart(
 
 ## Function Descriptions and Examples
 
-Example figures and descriptions for each one of the charts in this library.
+Example figures and descriptions for each chart in this library.
 
 ### Capability Histogram
 
@@ -137,6 +137,17 @@ Loss increases quadratically until the function reaches the specification limits
 The `taguchi_loss_function` function allows users to optionally display process data as a histogram. 
 
 ![Taguchi Loss Function Example](docs/figures/taguchi_loss_function_example.png)
+
+### Trend X Chart
+
+The `trend_xchart` function generates an X chart of process data that appears to be is increasing or decreasing over time.
+
+When all of the values fall inside the trended process limits, the underlying causal system is characterized as **predictable**. The future behavior of a predictable process can be anticipated within limits 
+because only common causes of routine variation influence process behavior. 
+
+When one or more values fall outside the process limits, the underlying causal system is characterized as **unpredictable**. The future behavior of an unpredictable process **cannot** be predicted within limits because both common causes of routine variation and assignable causes of exceptional variation influence process behavior.
+
+![Trend X Chart Example](docs/figures/trend_xchart_example.png)
 
 ### XmR Chart
 
@@ -197,6 +208,7 @@ process_improvement/
 │       ├── limit_chart_network_analysis_demo.ipynb
 │       ├── network_analysis_demo.ipynb
 │       ├── taguchi_loss_function_demo.ipynb
+|       ├── trended_xchart_demo.ipynb
 │       ├── xmr_chart_demo.ipynb
 │       └── xmr_comparison_demo.ipynb
 └── process_improvement/

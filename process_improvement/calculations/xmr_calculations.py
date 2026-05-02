@@ -43,7 +43,7 @@ def calculate_xmr_limits(
             restrict_LPL: bool,
             max_value: float = 100.0,
             min_value: float = 0.0
-            ) -> dict[str, float]:
+            ) -> XmRLimits:
             """
             Calculate Individuals and Moving Range (XmR) process limits.
 

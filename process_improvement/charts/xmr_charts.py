@@ -15,6 +15,7 @@ from process_improvement.calculations.xmr_calculations import(
 
 from .results import( 
     XmRResult, 
+    TrendXchartResults,
     XmRComparisonResults, 
     NetworkAnalysisResults
     )
@@ -883,3 +884,265 @@ def network_analysis(
             fig=fig,
             stats_df=stats_df
         )
+
+def trend_xchart(df: pd.DataFrame,
+                 values: str,
+                 x_labels: str,
+                 show_mean_markers: bool = False,
+                 show_labels: bool = True,
+                 annotation_offset: float = 0.1,
+                 annotation_fontsize: int = 14,
+                 mean_marker_size: int = 150,
+                 config: Optional[XmRChartConfig] = None
+                 ) -> TrendXchartResults:
+    """
+    Generate an X chart for a dataset that is increasing or decreasing over time.
+
+    This function creates an X chart tailored for processes that exhibit a 
+    systematic increase or decrease over time. It fits a linear trend line 
+    that is based on the means of the first and second halves of the data 
+    and computes corresponding upper and lower process limits that follow
+    the same slope.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input DataFrame containing the data to be plotted.
+    
+    values : str
+        Name of the column in 'df' containing the numeric values to analyze.
+    
+    x_labels : str
+        Name of the column in 'df' containing the labels to be used on the x
+        axis.
+
+    show_mean_markers : bool, default False
+        If True, displays '+' markers at the midpoint means of each half and 
+        their corresponding upper and lower limits.
+    
+    show_labels : bool, default True
+        If True, annotates the chart with mean +/- 3*Sigma(X) values for each
+        half.
+    
+    annotation_offset : float, default 0.1
+        Fraction of the data range used to vertically offset annotation labels
+        from their corresponding points.
+    
+    annotation_fontsize : int, default 14
+        Font size usef for annotation text.
+
+    mean_marker_size : int, default 150
+        Size of the markers used to highlight mean and limit points when
+        'show_mean_markers' is True.
+    
+    config : Optional[XmRChartConfig], default None
+        Configuration object controlling chart appearance (e.g., figure size,
+        DPI, tick interval, rounding precision). If None, a default configuration
+        is used.
+
+    Returns
+    -------
+    TrendXchartResults
+        Dataclass containing:
+            - fig : matplotlib.figure.Figure
+                The matplotlib Figure object containing the trended X chart.
+            - stats_df : pandas.DataFrame
+                DataFrame summarizing process statistics for trended X chart, including:
+                - Overall mean
+                - Standard deviation
+                - Average moving range (mR-bar)
+                - Estimated 3*Sigma(X) value
+                - Means of the first and second halves
+                - Slope (m) of the trend line
+                - Y-intercept (b) of the central (trend) line
+    
+    Raises
+    ------
+    TypeError
+        If 'df' is not a pandas Dataframe.
+    
+    ValueError
+        If specified columns are not found in 'df', or if configuration values
+        are invalid (e.g., non-positive tick interval or malformed figsize).
+
+    Notes
+    -----
+    - The dataset is split into two equal halves to estimate the trend.
+    - The slope of the central line is calculated from the means of the two halves.
+    - Process limits are derived using the average moving range (mR-bar) and the 2.660
+      scaling factor.
+    - Points outside the upper or lower process limits are highlighted on the chart.
+    
+    """
+
+    # --- CONFIGURATION ---
+    if config is None:
+        config = XmRChartConfig()
+
+    # --- VALIDATION ---
+    if not isinstance(df, pd.DataFrame):
+        raise TypeError("df must be a pandas DataFrame.")
+    
+    if values not in df.columns:
+        raise ValueError(f"Column '{values}' not found in DataFrame.")
+    
+    if x_labels not in df.columns:
+        raise ValueError(f"Column '{x_labels}' not found in DataFrame.")
+    
+    if config.tickinterval <= 0:
+        raise ValueError("tickinterval must be a positive integer.")
+    
+    if not (
+        isinstance(config.figsize, tuple)
+        and len(config.figsize) == 2
+        and all(isinstance(i, (int, float)) and i > 0 for i in config.figsize)
+        ):
+        raise ValueError("config.figsize must be a tuple of positive numbers (width, height).")
+    
+    # --- DATA PREPARATION ---
+    df = df.copy()
+    data = df[values]
+    labels = df[x_labels]
+
+    # --- CALCULATE PROCESS STATISTICS ---
+    mean = round(data.mean(), config.round_value)
+    stdev = round(data.std(), config.round_value)
+    mR = round(abs(data.diff()), config.round_value)
+    ave_mR = round(mR.mean(skipna=True), config.round_value)
+    three_sigmaX = round(2.660*ave_mR, config.round_value)
+
+    # --- SPLIT DATA IN HALF ---
+    mid = len(data) // 2
+    first_half_series = data.iloc[:mid]
+    second_half_series = data.iloc[mid:]
+
+    # --- CALCULATE SERIES MEANS ---
+    first_mean = round(first_half_series.mean(), config.round_value)
+    second_mean = round(second_half_series.mean(), config.round_value)
+
+    # --- CALCULATE THE X VALUE ASSOCIATED WITH EACH MEAN ---
+    x_mid_first = (first_half_series.index[0] + first_half_series.index[-1]) / 2
+    x_mid_second = (second_half_series.index[0] + second_half_series.index[-1]) / 2
+
+    # --- CALCULATE THE SLOPE (m) OF THE LINE CONNECTING FIRST AND SECOND MEANS ---
+    x1 = x_mid_first
+    x2 = x_mid_second
+    y1 = first_mean
+    y2 = second_mean
+
+    m = round((y2 - y1) / (x2 - x1), config.round_value)
+
+    # --- CALCULATE THE Y-INTERCEPT (b) ---
+    b = round(y1 - m * x1, config.round_value)
+
+    # --- EQUATION OF THE TREND LINE (CENTRAL LINE) ---
+    x = np.array([i for i in np.arange(len(data))])
+    y_line = m * x + b # i.e. y=mx+b
+
+    # --- CALCULATE THE TREND LIMIT LINE MEANS ---
+    mean_UPL1 = first_mean + three_sigmaX
+    mean_UPL2 = second_mean + three_sigmaX
+
+    mean_LPL1 = first_mean - three_sigmaX
+    mean_LPL2 = second_mean - three_sigmaX
+
+    # --- CALCULATE Y-INTERCEPTS FOR PROCESS LIMITS ---
+    b_UPL = mean_UPL1 - (m * x_mid_first)
+    b_LPL = mean_LPL1 - (m * x_mid_first)
+
+    # --- EQUATION FOR TREND LIMIT LIMITS ---
+    UPL = m * x + b_UPL
+    LPL = m * x + b_LPL
+
+    # --- CREATE LISTS TO SIMPLIFY PLOTTING ---
+    lines = {
+        'Mean': {'data': y_line, 'ls':'-', 'c':'black'},
+        'UPL': {'data': UPL, 'ls':'--', 'c':'#d72323'},
+        'LPL': {'data': LPL, 'ls':'--', 'c':'#d72323'}
+    }
+
+    # --- PLOT RESULTS ---
+    fig, ax = plt.subplots(figsize=config.figsize, 
+                           dpi=config.dpi)
+    
+    # Plot the data
+    ax.plot(data, marker='o', zorder=1)
+
+    # Highlight values outside limits
+    masked_data = np.ma.masked_where((data < UPL) & (data > LPL), data)
+    ax.plot(masked_data, marker='o', c='#d72323', markersize=9, markeredgecolor='black')
+
+    # Plot central line and process limits
+    for name, props in lines.items():
+        ax.plot(x, props['data'], ls=props['ls'], c=props['c'])
+    
+    # Specify xticks
+    tick_position = np.arange(0, len(labels), config.tickinterval)
+    ax.set_xticks(tick_position)
+    ax.set_xticklabels(labels.iloc[tick_position],
+                       rotation=config.rotate_labels,
+                       ha='center',
+                       fontsize=config.xtick_fontsize)
+    
+    # Conditionally plot average markers
+    if show_mean_markers:
+        mean_markers = [
+            (x_mid_first, first_mean),
+            (x_mid_second, second_mean),
+            (x_mid_first, mean_UPL1),
+            (x_mid_second, mean_UPL2),
+            (x_mid_first, mean_LPL1),
+            (x_mid_second, mean_LPL2)
+        ]
+
+        for x_val, y_val in mean_markers:
+            ax.scatter(x_val, y_val, 
+                       marker='+', 
+                       s=mean_marker_size, 
+                       c='black', 
+                       lw=2, 
+                       zorder=3)
+    
+    # Conditionally show limit values
+    if show_labels:
+        data_range = data.max() - data.min()
+        offset_amount = data_range * annotation_offset
+
+        if m > 0:
+            y_offsets = [offset_amount, -offset_amount]
+        else:
+            y_offsets = [-offset_amount, offset_amount]
+        
+        annotations = [
+            (x1, first_mean + three_sigmaX, 
+             f'{first_mean} \u00b1 {round(three_sigmaX, config.round_value)}'),
+             (x2, second_mean - three_sigmaX, 
+             f'{second_mean} \u00b1 {round(three_sigmaX, config.round_value)}'),
+        ]
+
+        for (x_val, y_val, label), y_offset in zip(annotations, y_offsets):
+            ax.annotate(label, 
+                        xy=(x_val, y_val),
+                        xytext=(x_val, y_val + y_offset),
+                        textcoords='data',
+                        va='center',
+                        ha='center',
+                        fontsize=annotation_fontsize)
+            
+    sns.despine()
+    plt.show()
+
+    # --- CREATE RESULTS DATAFRAME ---
+    stats_df = pd.DataFrame({
+        'Statistic': [
+            'Mean', 'Stdev', 'Avg. mR', '3*Sigma(X)',
+        '1st Half Mean', '2nd Half Mean',
+        'Slope (m)', 'Central Line Y-int (b)'
+        ],
+        'Value': [
+            mean, stdev, ave_mR, three_sigmaX,
+            first_mean, second_mean, m, b
+        ]
+    })
+
+    return TrendXchartResults(fig=fig, stats_df=stats_df)

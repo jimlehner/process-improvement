@@ -305,8 +305,8 @@ def taguchi_loss_function(
                     [histplot.patches[-1].get_x() + histplot.patches[-1].get_width()]
 
         # --- Conditionally align x-axis ticks ---    
-        if config.align_ticks_with_bins in ("Centers", "Edges") and histplot.patches:
-            if config.align_ticks_with_bins == "Centers":
+        if config.align_xticks_with_bins in ("Centers", "Edges") and histplot.patches:
+            if config.align_xticks_with_bins == "Centers":
                 # Tick positions at the **center of each bin**
                 bin_positions = [(bin_edges[i] + bin_edges[i+1]) / 2 for i in range(len(bin_edges)-1)]
             else:  # "Edges"
@@ -442,7 +442,7 @@ config = TaguchiLossConfig(
       show_grid=False,
     #   legend_round_value=2,
       show_label_values=False,
-      align_ticks_with_bins='Centers',
+      align_xticks_with_bins='Centers',
       show_indices=True,
       show_xtick_labels=True,
       show_mean_label=True,

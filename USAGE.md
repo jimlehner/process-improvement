@@ -28,7 +28,7 @@ The `XmRChartConfig` class defines configuration settings for an XmR chart.
 
 ✅ Axes & Ticks
 | Parameter           | Type   | Default | Description                                     |
-|-------------=-------|--------|---------|-------------------------------------------------|
+|---------------------|--------|---------|-------------------------------------------------|
 | `tickinterval`      | int    | 1       | Interval between ticks on the x-axis            |
 | `rotate_labels`     | int    | 0       | Rotation angle for x-axis tick labels in degrees|
 | `xtick_fontsize`    | int    | 10      | Font size for x-axis tick labels                |
@@ -222,6 +222,164 @@ fig = xmr_comp_result.fig
 stats_df = xmr_comp_result.stats_df
 ```
 
+## Trend X Chart
+
+The `trend_xchart` function generates an X chart for data that shows a consistent upward or downward trend over time.
+It leverages the `XmRChartConfig` class for controlling chart apperance, layout, and formatting behind behaviors.
+
+🎨 **Figure & Layout**
+
+| Parameter     | Type   | Default | Description                               |
+|---------------|--------|---------|-------------------------------------------|
+| `figsize`     | tuple  | (15, 6) | Figure size `(width, height)`             |
+| `dpi`         | int    | 350     | Resolution of the figure                  |
+| `show`        | bool   | False   | Display the figure after creation         |
+| `return_axes` | str    | 'both'  | Axes to return ("both", "x", "mr")        |
+
+---
+
+✅ **Axes & Ticks**
+
+| Parameter           | Type   | Default | Description                                      |
+|---------------------|--------|---------|--------------------------------------------------|
+| `tickinterval`      | int    | 1       | Interval between x-axis ticks                    |
+| `rotate_labels`     | int    | 0       | Rotation angle for x-axis labels                 |
+| `xtick_fontsize`    | int    | 10      | Font size for x-axis tick labels                 |
+| `show_xticks`       | bool   | True    | Whether to display x-axis ticks                  |
+| `show_yticks`       | bool   | True    | Whether to display y-axis ticks                  |
+| `label_fontsize`    | int    | 10      | Font size for axis labels                        |
+| `xchart_ylabel`     | str    | 'Individual Value (X)' | Label for y-axis               |
+| `mr_xlabel`         | str    | ''      | Label for x-axis (if used)                       |
+| `mrchart_ylabel`    | str    | 'Moving Range (mR)' | (Not used in this chart)         |
+
+---
+
+📊 **Lines & Styling**
+
+| Parameter            | Type   | Default | Description                                 |
+|----------------------|--------|---------|---------------------------------------------|
+| `linestyle`          | str    | '-'     | Line style for plotted data                 |
+| `mean_linestyle`     | str    | '-'     | Line style for trend/central line           |
+
+---
+
+📝 **Titles & Annotations**
+
+| Parameter              | Type   | Default     | Description                                      |
+|------------------------|--------|-------------|--------------------------------------------------|
+| `show_chart_titles`    | bool   | False       | Whether to display chart title                   |
+| `xchart_title`         | str    | 'X chart'   | Title of the chart                               |
+| `xchart_title_fontsize`| int    | 12          | Font size of chart title                         |
+| `show_limit_values`    | str    | "none"      | Show annotations ("none", "labels", "values")   |
+
+---
+
+📈 **Statistics / Values**
+
+| Parameter        | Type | Default | Description                                  |
+|------------------|------|---------|----------------------------------------------|
+| `round_value`    | int  | 2       | Decimal precision for calculated values      |
+| `restrict_UPL`   | bool | False   | Restrict upper limit behavior                |
+| `restrict_LPL`   | bool | True    | Restrict lower limit behavior                |
+
+---
+
+📊 **Markers & Trend-Specific Options**
+
+| Parameter              | Type  | Default | Description                                      |
+|------------------------|-------|---------|--------------------------------------------------|
+| `show_mean_markers`    | bool  | False   | Show '+' markers at mean and limit points        |
+| `show_labels`          | bool  | True    | Display mean ± 3σ annotations                    |
+| `annotation_offset`    | float | 0.1     | Vertical offset for annotation placement         |
+| `annotation_fontsize`  | int   | 14      | Font size for annotations                        |
+| `mean_marker_size`     | int   | 150     | Size of mean/limit markers                       |
+
+---
+
+📈 **Statistics Output**
+
+Returns a `TrendXchartResults` object containing:
+
+- `fig`: matplotlib Figure  
+- `stats_df`: DataFrame with:
+  - Mean
+  - Standard deviation
+  - Average moving range
+  - Estimated 3σ value
+  - First & second half means
+  - Trend slope (m)
+  - Trend intercept (b)
+
+---
+
+### Example
+
+```python
+import pandas as pd
+from process_improvement.charts.xmr_charts import trend_xchart
+from process_improvement.charts.utils import XmRChartConfig
+
+# Example dataset with upward trend
+df = pd.DataFrame({
+    "date": [
+        "2025-01-01","2025-01-02","2025-01-03","2025-01-04",
+        "2025-01-05","2025-01-06","2025-01-07","2025-01-08"
+    ],
+    "value": [10, 11, 12, 13, 15, 16, 17, 18]
+})
+
+# Configuration aligned with XmRChartConfig
+config = XmRChartConfig(
+    # --- Figure & Layout ---
+    figsize=(14, 6),
+    dpi=300,
+    show=False,
+    return_axes='both',
+
+    # --- Axes & Ticks ---
+    tickinterval=1,
+    rotate_labels=45,
+    xtick_fontsize=9,
+    show_xticks=True,
+    show_yticks=True,
+    label_fontsize=10,
+
+    # --- Lines & Styling ---
+    linestyle='-',
+    mean_linestyle='-',
+
+    # --- Titles & Annotations ---
+    show_chart_titles=True,
+    xchart_title='Trend X Chart',
+    xchart_title_fontsize=12,
+    show_limit_values="none",
+
+    # --- Statistics ---
+    round_value=2,
+    restrict_UPL=False,
+    restrict_LPL=True
+)
+
+# Generate Trend X Chart
+trend_result = trend_xchart(
+    df=df,
+    values="value",
+    x_labels="date",
+    show_mean_markers=True,
+    show_labels=True,
+    annotation_offset=0.08,
+    annotation_fontsize=12,
+    mean_marker_size=120,
+    config=config
+)
+
+# Access outputs
+fig = trend_result.fig
+stats = trend_result.stats_df
+
+print(stats)
+```
+
 ## Network Analysis
 
 The `NetworkAnalysisConfig` class defines configuration settings for a grid of XmR charts in a network analysis.
@@ -256,7 +414,7 @@ The `NetworkAnalysisConfig` class defines configuration settings for a grid of X
 
 📝 Titles & Annotations
 | Parameter            | Type     | Default | Description                                   |
-|--------------------=-|----------|---------|-----------------------------------------------|
+|----------------------|----------|---------|-----------------------------------------------|
 | `show_chart_titles`  | bool     | False   | Whether to display chart titles above subplots|
 | `show_limit_values`  | bool     | True    | Whether to display limit values on the chart  |
 

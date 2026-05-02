@@ -513,6 +513,9 @@ class ComboChartConfig:
 
       🏷 Labels & Fonts
       ────────────────────────────────────────
+      tickinterval : int, default=1,
+            Interval between ticks on the x-axis.
+
       label_fontsize : int, default=10
             Font size for axis labels.
 
@@ -563,6 +566,7 @@ class ComboChartConfig:
       ac_markersize: int = 9
 
       # 🏷 Labels & Fonts
+      tickinterval: int = 1
       label_fontsize: int = 10
       xtick_fontsize: int = 10
       sub_title_fontsize: int = 14
@@ -718,69 +722,69 @@ class LimitChartConfig:
       🎨 Figure & Layout
       ────────────────────────────────────────
       figsize : tuple[float, float], default=(15, 5)
-      Width and height of the figure in inches.
+            Width and height of the figure in inches.
 
       dpi : int, default=350
-      Resolution of the figure in dots per inch.
+            Resolution of the figure in dots per inch.
 
       show : bool, default=False
-      Whether to display the chart immediately after plotting.
+            Whether to display the chart immediately after plotting.
 
       📝 Title & Labels
       ────────────────────────────────────────
       chart_title : str, default='LC'
-      Title of the chart.
+            Title of the chart.
 
       show_chart_title : bool, default=False
-      Whether to display the chart title.
+            Whether to display the chart title.
 
       limit_chart_ylabel : str, default=''
-      Label for the y-axis.
+            Label for the y-axis.
 
       label_fontsize : int, default=10
-      Font size for axis labels.
+            Font size for axis labels.
 
       ✅ Axes & Ticks
       ────────────────────────────────────────
       tickinterval : int, default=2
-      Interval between ticks on the x-axis.
+            Interval between ticks on the x-axis.
 
       rotate_labels : int, default=0
-      Rotation angle for x-axis tick labels in degrees.
+            Rotation angle for x-axis tick labels in degrees.
 
       xtick_fontsize : int, default=10
-      Font size for x-axis tick labels.
+            Font size for x-axis tick labels.
 
       show_xticks : bool, default=True
-      Whether to display x-axis ticks.
+            Whether to display x-axis ticks.
 
       show_ytick_labels : bool, default=True
-      Whether to display y-axis tick labels.
+            Whether to display y-axis tick labels.
 
       📊 Lines & Styling
       ────────────────────────────────────────
       linestyle : str, default='-'
-      Line style for the main data line.
+            Line style for the main data line.
 
       mean_linestyle : str, default='-'
-      Line style for the mean/central line.
+            Line style for the mean/central line.
 
       target_line_color : str, default='tab:green'
-      Color of the target line.
+            Color of the target line.
 
       target_linestyle : str, default='--'
-      Line style for the target line.
+            Line style for the target line.
 
       🏷 Annotations & Statistics
       ────────────────────────────────────────
       show_label_values : bool, default=True
-      Whether to display numeric values as annotations on the chart.
+            Whether to display numeric values as annotations on the chart.
 
       show_mean : bool, default=True
-      Whether to display the mean line on the chart.
+            Whether to display the mean line on the chart.
 
       round_value : int, default=2
-      Number of decimal places for rounding calculated values.
+            Number of decimal places for rounding calculated values.
       """
 
       # 🎨 Figure & Layout
@@ -825,70 +829,70 @@ class LCNAConfig:
       🎨 Figure & Layout
       ────────────────────────────────────────
       figsize : tuple[float, float], default=(15, 5)
-      Width and height of the figure in inches.
+            Width and height of the figure in inches.
 
       dpi : int, default=350
-      Resolution of the figure in dots per inch.
+            Resolution of the figure in dots per inch.
 
       show : bool, default=False
-      Whether to display the figure immediately after creation.
+            Whether to display the figure immediately after creation.
 
       hspace : float, default=0.2
-      Vertical space between subplots.
+            Vertical space between subplots.
 
       sharey : bool, default=True
-      Share the y-axis across subplots.
+            Share the y-axis across subplots.
 
       ✅ Axes & Ticks
       ────────────────────────────────────────
       tickinterval : int, default=2
-      Interval between ticks on the x-axis.
+            Interval between ticks on the x-axis.
 
       rotate_labels : int, default=0
-      Rotation angle for x-axis tick labels in degrees.
+            Rotation angle for x-axis tick labels in degrees.
 
       xtick_fontsize : int, default=10
-      Font size for x-axis tick labels.
+            Font size for x-axis tick labels.
 
       show_xticks : bool, default=False
-      Whether to display x-axis ticks on subplots.
+            Whether to display x-axis ticks on subplots.
 
       show_yticks : bool, default=True
-      Whether to display y-axis ticks on subplots.
+            Whether to display y-axis ticks on subplots.
 
       ylabel_fontsize : int, default=10
-      Font size for axis labels.
+            Font size for axis labels.
 
       limit_chart_ylabel : str, default=''
-      Label for the y-axis on the first column of subplots.
+            Label for the y-axis on the first column of subplots.
 
       📊 Lines & Styling
       ────────────────────────────────────────
       linestyle : str, default='-'
-      Line style for the main data line in subplots.
+            Line style for the main data line in subplots.
 
       mean_linestyle : str, default='-'
-      Line style for the mean/central line in subplots.
+            Line style for the mean/central line in subplots.
 
       target_line_color : str, default='tab:green'
-      Color of the target line.
+            Color of the target line.
 
       target_linestyle : str, default='--'
-      Line style for the target line.
+            Line style for the target line.
 
       📝 Title & Annotations
       ────────────────────────────────────────
       show_chart_title : bool, default=False
-      Whether to display subplot titles.
+            Whether to display subplot titles.
 
       show_label_values : bool, default=True
-      Whether to display numeric values as annotations on the charts.
+            Whether to display numeric values as annotations on the charts.
 
       show_mean : bool, default=True
-      Whether to display the mean line on subplots.
+            Whether to display the mean line on subplots.
 
       round_value : int, default=2
-      Number of decimal places for rounding calculated values.
+            Number of decimal places for rounding calculated values.
       """
     # --- Figure & Layout ---
     figsize: tuple[float, float] = (15, 6)

@@ -30,9 +30,103 @@ def combo_chart(
         config: Optional[ComboChartConfig] = None
         ) -> ComboChartResults:
     """
-    Docstring for combo chart
-    
+    Generate a combination XmR control chart and capability histogram for process analysis.
+
+    Creates a side-by-side figure with an Individuals (X) control chart on the left and
+    a rotated capability histogram on the right, sharing a common y-axis. The chart
+    highlights out-of-control points, process limits, specification limits, and
+    capability indices.
+
+    Parameters
+    ----------
+    📥 Input Data
+    ────────────────────────────────────────
+    df : pd.DataFrame
+        DataFrame containing the process data.
+    values_column : str
+        Name of the column containing the measured process values.
+    xchart_labels_column : str
+        Name of the column to use as x-axis tick labels on the control chart.
+
+    📐 Specification Limits
+    ────────────────────────────────────────
+    USL : float
+        Upper Specification Limit.
+    LSL : float
+        Lower Specification Limit.
+    Target : float, optional
+        Target value. Defaults to the midpoint of USL and LSL if not provided.
+
+    📊 Histogram
+    ────────────────────────────────────────
+    histogram_bins : int, str, or None, default='auto'
+        Number of bins, or a bin strategy string (e.g. 'auto').
+        Passed directly to numpy.histogram.
+
+    🏷 Annotations & Labels
+    ────────────────────────────────────────
+    show_limit_values : bool, default=True
+        If True, annotates chart limits with their numeric values.
+        If False, annotates with label strings (e.g. 'UPL', 'LSL').
+    chart_title : str, default=''
+        Title for the overall chart.
+
+    ⚙️ Configuration
+    ────────────────────────────────────────
+    config : ComboChartConfig, optional
+        Configuration dataclass controlling visual styling, layout, and display
+        options. If None, a default ComboChartConfig is used.
+
+    Returns
+    -------
+    ComboChartResults
+        A dataclass with the following fields:
+
+        fig : matplotlib.figure.Figure
+                The rendered combo chart figure.
+        stats_df : pd.DataFrame
+                A single-row DataFrame containing process statistics and capability
+                indices, with the following columns:
+
+                - Characterization : str — 'Predictable' or 'Unpredictable'
+                - Cp, Cpk, Pp, Ppk : float — Capability and performance indices
+                - Mean : float — Process mean
+                - Std Dev (s) : float — Sample standard deviation
+                - Sigma(X) : float — Estimated process sigma from moving ranges
+                - DNS : float — Distance to nearest specification limit
+                - Tolerance : float — Total specification width (USL - LSL)
+                - Target, USL, LSL : float — Input specification values
+
+    Raises
+    ------
+    ValueError
+        If any required columns are missing from df, or if USL <= LSL.
+
+    Notes
+    -----
+    - Process limits (UPL, LPL) are calculated using XmR methodology via
+    calculate_xmr_limits(). A process is characterized as 'Unpredictable'
+    if any individual values exceed the process limits or any moving ranges
+    exceed the upper range limit (URL).
+    - Out-of-control points are highlighted in red on the control chart.
+    - The histogram is plotted horizontally (y=data) to share the y-axis
+    with the control chart.
+
+    Examples
+    --------
+    >>> results = combo_chart(
+    ...     df=my_df,
+    ...     values_column='measurement',
+    ...     xchart_labels_column='sample_id',
+    ...     USL=105.0,
+    ...     LSL=95.0,
+    ...     Target=100.0,
+    ...     chart_title='Process Control Chart'
+    ... )
+    >>> results.fig.savefig('combo_chart.png', dpi=150)
+    >>> print(results.stats_df[['Characterization', 'Cpk', 'Ppk']])
     """
+
     # --- CONFIGURATION ---
     if config is None:
         config = ComboChartConfig()

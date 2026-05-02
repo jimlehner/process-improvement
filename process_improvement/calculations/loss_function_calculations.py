@@ -12,7 +12,7 @@ def taguchi_loss_calcs(
         USL: float,
         LSL: float,
         Target: Optional[float] = None
-        ) -> dict[str, float or list]:
+        ) -> TaguchiLossCalcResults:
     """
     Compute quadratic loss function (Taguchi loss function) values over a
     specification range.
@@ -119,12 +119,49 @@ def expected_loss_calc(
         Target: Optional[float] = None,
         cost_of_scrap: Optional[float] = 1,
         # round_value: Optional[float] = 1
-        ) -> dict[str, float or list]:
+        ) -> ExpectedLossCalcResults:
     """
-    Docstring for expected_loss
+    Calculates the expected average loss per unit using the Taguchi loss function.
 
-    A : Assigned loss at specification limits, default is 1
+    The expected average loss is defined as E{L(x)} = K * ((mean - Target)**2 + stdev**2),
+    where K is the quality loss coefficent derived from the vost of scrap and the tolerance
+    limits.
+
+    Parameters
+    ----------
+    data : pd.Series
+        Measured process data.
     
+    USL : float
+        Upper specification limit.
+    
+    LSL : float
+        Lower specification limit.
+
+    Target : float, optional
+        Target value for the process. Defaults to the midpoint of USL and LSL.
+    
+    cost _of_scrap : float, optional
+        Assigned loss (A) at the specification limits, i.e. the cost incurred
+        when a measured quality or performance characteristic falls outside of 
+        the specification limits. Defaults to $1.00.
+    
+    Returns
+    -------
+    ExpectedLossCalcResults
+        A results object cotnaining a DataFrame with the following metrics:
+        E{L(x)}, Mean, Stdev, K, Cost of Scrap, USL, LSL, Target, and Tolerance
+    
+    Raises
+    ------
+    ValueError
+        If USL is not greater than LSL.
+    
+    Examples
+    --------
+    >>>> data = pd.Series([10.1, 9.8, 10.3, 9.9, 10.0])
+    >>>> results = expected_loss_calc(data, USL=11.0, LSL=9.0, cost_of_scrap=50)
+    >>>> results.df
     """
 
     # --- VALIDATION ---

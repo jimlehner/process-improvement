@@ -13,7 +13,7 @@ from .results import (
 
 from .utils import (
     LimitChartConfig,
-    LimitChartNetworkAnalysisConfig,
+    LCNAConfig,
     limit_chart_masked_values,
     highlight_vals_outside_spec
     )
