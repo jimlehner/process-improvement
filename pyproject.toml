@@ -17,6 +17,12 @@ dependencies = [
     "seaborn>=0.13.2"
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0"
+]
+
 [project.scripts]
 process_improvement = "process_improvement.cli:main"
 
