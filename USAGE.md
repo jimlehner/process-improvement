@@ -7,6 +7,7 @@ This document shows detailed examples for using the `process_improvement` librar
 ## Table of Contents
 
 - [XmR Chart](#xmr-chart)
+- [XmR Comparison Chart](#xmr-comparison)
 - [Network Analysis](#network-analysis)
 - [Capability Histogram](#capability-histogram)
 - [Combo Chart](#combo-chart)
